@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Calculator from "@/components/Calculator";
 
 /* ─── Colour constants (hardcoded per spec — no CSS vars on UI elements) ─── */
 const C = {
@@ -19,8 +20,7 @@ export default function HomePage() {
       <StatsStrip />
       <WhatWeDo />
       <CalculatorBand />
-      <CalculatorPlaceholder />
-      <MarcellaLine />
+      <CalculatorSection />
       <BlogSection />
       <Newsletter />
     </>
@@ -238,32 +238,9 @@ function CalculatorBand() {
   );
 }
 
-/* ─── 5. Calculator placeholder (Phase 2 replaces this) ─────────────────── */
-function CalculatorPlaceholder() {
-  return (
-    <section
-      style={{ background: "#ffffff" }}
-      className="px-6 py-20 lg:px-10"
-    >
-      <div
-        className="mx-auto max-w-5xl rounded-lg flex flex-col items-center justify-center py-20 text-center"
-        style={{ background: C.tealTint }}
-      >
-        <p
-          className="text-sm font-medium mb-2"
-          style={{ color: C.tealDark, fontFamily: "var(--font-inter)" }}
-        >
-          Calculator loading — Phase 2
-        </p>
-        <p
-          className="text-base"
-          style={{ color: C.tealDark, fontFamily: "var(--font-inter)" }}
-        >
-          The interactive ticket pricing calculator will appear here.
-        </p>
-      </div>
-    </section>
-  );
+/* ─── 5. Calculator (live — Phase 2) ────────────────────────────────────── */
+function CalculatorSection() {
+  return <Calculator />;
 }
 
 /* ─── 6. Marcella line ───────────────────────────────────────────────────── */
