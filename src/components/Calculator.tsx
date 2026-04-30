@@ -261,6 +261,7 @@ export default function Calculator() {
     if (form.totalRegistrations <= 0) return;
     if (form.expenses <= 0) return;
     if (form.priceIncreaseRate <= 0) return;
+    if (form.preConEnabled && form.preConAttendancePct <= 0) return;
     calculateWith(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
@@ -462,20 +463,6 @@ export default function Calculator() {
                   </div>
                 )}
 
-                {/* Reset button */}
-                <button
-                  onClick={reset}
-                  className="w-full rounded-sm py-2 text-sm font-medium"
-                  style={{
-                    background: "transparent",
-                    border: `1px solid rgba(45,27,78,0.2)`,
-                    color: C.charcoal,
-                    fontFamily: "var(--font-inter)",
-                    cursor: "pointer",
-                  }}
-                >
-                  Reset calculator
-                </button>
 
                 {/* Revenue Summary */}
                 <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: "#ffffff" }}>
