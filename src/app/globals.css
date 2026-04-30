@@ -30,3 +30,17 @@ body {
 h1, h2, h3 {
   font-family: var(--font-outfit), system-ui, sans-serif;
 }
+
+/* Calculator — tooltip hover */
+.tip-wrap:hover .tip-box { display: block !important; }
+
+/* Calculator — single-column on mobile */
+@media (max-width: 768px) {
+  .calc-grid { grid-template-columns: 1fr !important; }
+}
+
+/* LogoLoader — spin keyframe */
+@keyframes em-logo-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

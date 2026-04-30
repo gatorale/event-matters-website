@@ -251,12 +251,13 @@ export default function Calculator() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        signal: AbortSignal.timeout(10000),
       });
-      if (!res.ok) return; // leave previous results in place, no error shown
+      if (!res.ok) return;
       const data: CalculateResponse = await res.json();
       setResults(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+    } catch {
+      setError("Something went wrong — please try again.");
     } finally {
       setLoading(false);
     }
@@ -602,13 +603,6 @@ export default function Calculator() {
         <EmailGate onClose={() => setShowGate(false)} results={results} form={form} currencySymbol={currencySymbol} />
       )}
 
-      {/* Tooltip CSS */}
-      <style>{`
-        .tip-wrap:hover .tip-box { display: block !important; }
-        @media (max-width: 768px) {
-          .calc-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

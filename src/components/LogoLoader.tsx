@@ -154,12 +154,6 @@ export default function LogoLoader({
         </span>
       )}
 
-      <style>{`
-        @keyframes em-logo-spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
