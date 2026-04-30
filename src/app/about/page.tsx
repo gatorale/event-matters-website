@@ -32,7 +32,6 @@ export default function AboutPage() {
     <>
       <PageHero />
       <Body />
-      <CtaBand />
     </>
   );
 }
@@ -52,8 +51,8 @@ function PageHero() {
           About
         </p>
         <h1
-          className="text-6xl md:text-7xl font-bold leading-tight"
-          style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
+          className="font-bold leading-tight"
+          style={{ color: C.ivory, fontFamily: "var(--font-outfit)", fontSize: "clamp(4rem, 10vw, 7rem)" }}
         >
           My Story
         </h1>
@@ -99,7 +98,7 @@ function Body() {
                 borderLeft: `3px solid ${C.teal}`,
                 borderLeftStyle: "solid",
                 borderLeftColor: C.teal,
-                background: "#ffffff",
+                background: C.tealTint,
                 padding: "1.25rem 1.5rem",
               }}
             >
@@ -140,7 +139,7 @@ function Body() {
             {/* Headshot */}
             <div
               className="w-full overflow-hidden rounded-lg"
-              style={{ aspectRatio: "3/4" }}
+              style={{ aspectRatio: "2/3" }}
             >
               <Image
                 src="/headshot.png"
@@ -148,7 +147,7 @@ function Body() {
                 width={600}
                 height={750}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center 20%" }}
+                style={{ objectPosition: "center 30%" }}
                 priority
               />
             </div>
@@ -225,59 +224,3 @@ function Body() {
   );
 }
 
-/* ─── CTA band ──────────────────────────────────────────────────────────── */
-function CtaBand() {
-  return (
-    <section
-      style={{ background: C.plum }}
-      className="px-6 py-16 lg:px-10"
-    >
-      <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div className="flex flex-col gap-4">
-          <p
-            className="text-xs font-semibold uppercase tracking-widest"
-            style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
-          >
-            Work together
-          </p>
-          <h2
-            className="text-3xl font-bold leading-snug"
-            style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
-          >
-            Let&apos;s build something worth attending.
-          </h2>
-          <p
-            className="text-base leading-relaxed"
-            style={{ color: "rgba(250,249,247,0.75)", fontFamily: "var(--font-inter)" }}
-          >
-            If you&apos;re looking for a sharper content programme, a better CFP,
-            or a clearer strategy for what happens between events — let&apos;s
-            talk.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 lg:justify-end">
-          <Link
-            href="mailto:info@eventmatters.co"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-sm text-base font-medium transition-opacity hover:opacity-90"
-            style={{ background: C.teal, color: C.plum, fontFamily: "var(--font-inter)" }}
-          >
-            Get in touch →
-          </Link>
-          <Link
-            href="https://blog.eventmatters.co"
-            className="inline-flex items-center justify-center px-7 py-3 text-base font-medium"
-            style={{
-              color: C.ivory,
-              fontFamily: "var(--font-inter)",
-              borderBottom: `2px solid ${C.teal}`,
-              paddingBottom: "0.75rem",
-            }}
-          >
-            Or read the blog first
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}

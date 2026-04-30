@@ -156,8 +156,8 @@ function WhatWeDo() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
-            eyebrow="Content & resources"
-            title="CONTENT & IDEAS"
+            eyebrow="Writing & thinking"
+            title="WEEKLY POSTS"
             body="Practical articles, frameworks, and perspectives on event strategy, speaker programmes, audience engagement, and the year-round work that makes events worth attending."
             cta="Read the blog →"
             href="https://blog.eventmatters.co"
@@ -170,8 +170,8 @@ function WhatWeDo() {
             href="#calculator"
           />
           <Card
-            eyebrow="Free tools"
-            title="FREE RESOURCES"
+            eyebrow="Free resources"
+            title="Everyday Templates"
             body="Everyday Templates. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
             cta="Explore Templates →"
             href="#"
