@@ -10,63 +10,52 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Email required" }, { status: 400 });
   }
 
-  /* ── 1. Substack subscription / verification ──────────────────────────── */
-  if (mode === "subscribe") {
-    if (!SUBSTACK_PUB_ID) {
-      return NextResponse.json({ error: "Substack not configured" }, { status: 503 });
-    }
-    const substackRes = await fetch(
-      `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/subscribe`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          first_name: firstName || undefined,
-          tags: ["calculator"],
-        }),
-      }
-    );
-    if (!substackRes.ok && substackRes.status !== 409) {
-      return NextResponse.json({ error: "Failed to subscribe" }, { status: 502 });
-    }
-  } else {
-    // "existing" mode — verify against Substack
-    if (!SUBSTACK_PUB_ID) {
-      return NextResponse.json({ error: "Substack not configured" }, { status: 503 });
-    }
-    const checkRes = await fetch(
-      `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/find?email=${encodeURIComponent(email)}`
-    );
-    if (!checkRes.ok) {
-      return NextResponse.json(
-        { error: "Email not found in subscriber list. Please subscribe first." },
-        { status: 404 }
+  /* ── 1. Substack subscription / verification (skipped if not configured) ── */
+  if (SUBSTACK_PUB_ID) {
+    if (mode === "subscribe") {
+      const substackRes = await fetch(
+        `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/subscribe`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            first_name: firstName || undefined,
+            tags: ["calculator"],
+          }),
+        }
       );
+      if (!substackRes.ok && substackRes.status !== 409) {
+        return NextResponse.json({ error: "Failed to subscribe" }, { status: 502 });
+      }
+    } else {
+      const checkRes = await fetch(
+        `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/find?email=${encodeURIComponent(email)}`
+      );
+      if (!checkRes.ok) {
+        return NextResponse.json(
+          { error: "Email not found in subscriber list. Please subscribe first." },
+          { status: 404 }
+        );
+      }
     }
   }
 
-  /* ── 2. Send confirmation email via Resend ────────────────────────────── */
-  if (!RESEND_API_KEY) {
-    return NextResponse.json({ error: "Email service not configured" }, { status: 503 });
-  }
-
-  const emailRes = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "Event Matters <news@eventmatters.co>",
-      to: email,
-      subject: "Your conference ticket pricing summary",
-      html: buildEmailHtml(firstName),
-    }),
-  });
-
-  if (!emailRes.ok) {
-    return NextResponse.json({ error: "Failed to send confirmation email" }, { status: 502 });
+  /* ── 2. Send confirmation email via Resend (skipped if not configured) ── */
+  if (RESEND_API_KEY) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Event Matters <news@eventmatters.co>",
+        to: email,
+        subject: "Your conference ticket pricing summary",
+        html: buildEmailHtml(firstName),
+      }),
+    });
   }
 
   return NextResponse.json({ ok: true });

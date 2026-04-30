@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import type { CalculateResponse } from "@/app/api/calculate/route";
 import type { CalcForm } from "@/types/calculator";
 import { downloadPDF } from "@/lib/export-pdf";
@@ -333,6 +333,7 @@ export default function Calculator() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showGate, setShowGate] = useState(false);
+  const [showMethodology, setShowMethodology] = useState(false);
 
   const set = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -611,7 +612,7 @@ export default function Calculator() {
                       fontFamily: "var(--font-inter)",
                       cursor: "pointer",
                     }}
-                    onClick={() => alert("Methodology detail — Phase 2 follow-up")}
+                    onClick={() => setShowMethodology(true)}
                   >
                     How we calculated this
                   </button>
@@ -655,6 +656,11 @@ export default function Calculator() {
       {/* Email gate modal */}
       {showGate && results && (
         <EmailGate onClose={() => setShowGate(false)} results={results} form={form} />
+      )}
+
+      {/* Methodology modal */}
+      {showMethodology && results && (
+        <MethodologyModal onClose={() => setShowMethodology(false)} form={form} results={results} />
       )}
 
       {/* Tooltip CSS */}
@@ -921,6 +927,124 @@ function EmailGate({
             </form>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Methodology modal ─────────────────────────────────────────────────────── */
+function MethodologyModal({
+  onClose,
+  form,
+  results,
+}: {
+  onClose: () => void;
+  form: FormState;
+  results: CalculateResponse;
+}) {
+  const r = 1 + form.priceIncreaseRate / 100;
+  const ebFrac = form.earlyBirdPct / 100;
+  const stdFrac = form.standardPct / 100;
+  const fpFrac = form.fullPricePct / 100;
+  const wf = ebFrac + stdFrac * r + fpFrac * r * r;
+  const netSponsorship = form.sponsorship * (1 - form.commissionRate / 100);
+  const totalNeeded = form.expenses + form.netProfit - netSponsorship;
+
+  function Row({ label, value }: { label: string; value: string }) {
+    return (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0", borderBottom: "1px solid rgba(45,27,78,0.07)" }}>
+        <span style={{ fontSize: 13, color: C.charcoal, fontFamily: "var(--font-inter)" }}>{label}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.plum, fontFamily: "var(--font-inter)", marginLeft: 16 }}>{value}</span>
+      </div>
+    );
+  }
+
+  function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+    return (
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: "50%", background: C.plum, color: C.ivory, fontSize: 12, fontWeight: 700, fontFamily: "var(--font-inter)", flexShrink: 0 }}>{n}</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.plum, fontFamily: "var(--font-inter)" }}>{title}</span>
+        </div>
+        <div style={{ paddingLeft: 34 }}>{children}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(45,27,78,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div style={{ background: "#ffffff", borderRadius: 8, padding: 32, maxWidth: 520, width: "100%", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
+        <button
+          onClick={onClose}
+          style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: C.charcoal, fontSize: 20, lineHeight: 1 }}
+          aria-label="Close"
+        >×</button>
+
+        <p className="text-xl font-bold mb-1" style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}>
+          How we calculated this
+        </p>
+        <p className="text-sm mb-6" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
+          Step-by-step breakdown based on your inputs.
+        </p>
+
+        <Step n={1} title="Net sponsorship income">
+          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+            Gross sponsorship minus the platform/agency commission.
+          </p>
+          <Row label={`$${fmt(form.sponsorship)} × (1 − ${form.commissionRate}%)`} value={`$${fmt(netSponsorship)}`} />
+        </Step>
+
+        <Step n={2} title="Revenue needed from ticket sales">
+          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+            Expenses plus target profit, less the net sponsorship income.
+          </p>
+          <Row label={`$${fmt(form.expenses)} + $${fmt(form.netProfit)} − $${fmt(netSponsorship)}`} value={`$${fmt(totalNeeded)}`} />
+        </Step>
+
+        <Step n={3} title="Weighted revenue factor">
+          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+            Because attendees buy at different prices, we calculate how many &ldquo;early bird equivalents&rdquo; each registrant represents on average. r&nbsp;=&nbsp;1&nbsp;+&nbsp;tier&nbsp;increase&nbsp;rate.
+          </p>
+          <Row
+            label={`${form.earlyBirdPct}% + ${form.standardPct}% × ${r.toFixed(2)} + ${form.fullPricePct}% × ${r.toFixed(2)}²`}
+            value={wf.toFixed(4)}
+          />
+        </Step>
+
+        <Step n={4} title="Early Bird price (main conference)">
+          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+            Revenue needed divided by registrations × weighted factor, rounded to the nearest $5.
+          </p>
+          <Row label={`$${fmt(totalNeeded)} ÷ (${fmt(form.totalRegistrations)} × ${wf.toFixed(4)})`} value={`$${fmt(results.mainCon.earlyBird)}`} />
+        </Step>
+
+        <Step n={5} title="Standard &amp; Full Price tiers">
+          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+            Each tier multiplies the previous by (1 + tier increase rate), rounded to the nearest $5.
+          </p>
+          <Row label={`Early Bird $${fmt(results.mainCon.earlyBird)} × ${r.toFixed(2)}`} value={`$${fmt(results.mainCon.standard)}`} />
+          <Row label={`Standard $${fmt(results.mainCon.standard)} × ${r.toFixed(2)}`} value={`$${fmt(results.mainCon.fullPrice)}`} />
+        </Step>
+
+        {results.preCon && (
+          <Step n={6} title="Pre-conference workshop">
+            <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
+              Calculated independently using the same weighted factor, but against the pre-con target (its own profit + honorarium costs).
+            </p>
+            <Row label="Pre-con Early Bird" value={`$${fmt(results.preCon.earlyBird)}`} />
+            <Row label="Pre-con Standard" value={`$${fmt(results.preCon.standard)}`} />
+            <Row label="Pre-con Full Price" value={`$${fmt(results.preCon.fullPrice)}`} />
+          </Step>
+        )}
+
+        <div style={{ marginTop: 8, paddingTop: 16, borderTop: "1px solid rgba(45,27,78,0.1)" }}>
+          <p style={{ fontSize: 11, color: "rgba(44,44,42,0.5)", fontFamily: "var(--font-inter)", lineHeight: 1.5 }}>
+            All prices are rounded to the nearest $5. Results are estimates — verify with your accountant before setting ticket prices.
+          </p>
+        </div>
       </div>
     </div>
   );
