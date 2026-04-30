@@ -80,11 +80,11 @@ function Hero() {
 
 /* ─── 2. Stats strip ──────────────────────────────────────────────────────── */
 const NUMBER_STATS = [
-  { value: "18+", label: "years of community & events" },
-  { value: "26",  label: "large-scale tech conferences" },
-  { value: "214", label: "full-day workshops" },
-  { value: "122", label: "virtual & hybrid events" },
-  { value: "288", label: "newsletter editions" },
+  { value: "18+",  label: "years of community & events" },
+  { value: "26",   label: "large-scale tech conferences" },
+  { value: "400+", label: "breakout sessions" },
+  { value: "214",  label: "full-day workshops" },
+  { value: "122",  label: "virtual & hybrid events" },
 ];
 
 function StatsStrip() {

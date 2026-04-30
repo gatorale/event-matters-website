@@ -19,12 +19,13 @@ const C = {
 };
 
 const ABOUT_STATS = [
-  { value: "18+", label: "years of community & events" },
-  { value: "26",  label: "large-scale tech conferences" },
-  { value: "214", label: "full-day workshops" },
-  { value: "122", label: "virtual & hybrid events" },
-  { value: "35",  label: "training courses" },
-  { value: "288", label: "newsletter editions" },
+  { value: "18+",  label: "years of community & events" },
+  { value: "26",   label: "large-scale tech conferences" },
+  { value: "400+", label: "breakout sessions" },
+  { value: "214",  label: "full-day workshops" },
+  { value: "122",  label: "virtual & hybrid events" },
+  { value: "35",   label: "training courses" },
+  { value: "288",  label: "newsletter editions" },
 ];
 
 export default function AboutPage() {
