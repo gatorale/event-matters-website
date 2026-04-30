@@ -240,10 +240,7 @@ export default function Calculator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Calculation failed");
-      }
+      if (!res.ok) return; // leave previous results in place, no error shown
       const data: CalculateResponse = await res.json();
       setResults(data);
     } catch (e) {
@@ -495,7 +492,7 @@ export default function Calculator() {
                 {/* Download */}
                 <div className="flex flex-col gap-3" style={{ marginTop: "auto" }}>
                   <button
-                    className="w-full rounded-sm py-2.5 text-sm transition-opacity hover:opacity-90"
+                    className="w-full rounded-sm py-3 text-base transition-opacity hover:opacity-90"
                     style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)", fontWeight: 600, border: "none", cursor: "pointer" }}
                     onClick={() => setShowGate(true)}
                   >

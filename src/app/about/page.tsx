@@ -20,7 +20,7 @@ const C = {
 
 const ABOUT_STATS = [
   { value: "18+", label: "years of community & events" },
-  { value: "26",  label: "in-person conferences" },
+  { value: "26",  label: "large-scale tech conferences" },
   { value: "214", label: "full-day workshops" },
   { value: "122", label: "virtual & hybrid events" },
   { value: "35",  label: "training courses" },
@@ -135,12 +135,12 @@ function Body() {
           </div>
 
           {/* Right — sidebar */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6" style={{ maxWidth: 280, margin: "0 auto", width: "100%" }}>
             {/* Headshot */}
-            <div className="flex justify-center">
+            <div>
               <div
                 className="overflow-hidden rounded-lg"
-                style={{ width: "100%", maxWidth: 280, height: 340, flexShrink: 0 }}
+                style={{ width: "100%", height: 340 }}
               >
                 <Image
                   src="/headshot.png"

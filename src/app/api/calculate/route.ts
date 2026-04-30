@@ -98,69 +98,77 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Total registrations must be at least 1" }, { status: 400 });
   }
 
-  /* ─ derived constants ────────────────────────────────────────── */
-  const commission = commissionRate / 100;
-  const r = 1 + priceIncreaseRate / 100;
-  const ebFrac = earlyBirdPct / 100;
-  const stdFrac = standardPct / 100;
-  const fpFrac = fullPricePct / 100;
+  try {
+    /* ─ derived constants ─────────────────────────────────────────── */
+    const commission = commissionRate / 100;
+    const r = 1 + priceIncreaseRate / 100;
+    const ebFrac = earlyBirdPct / 100;
+    const stdFrac = standardPct / 100;
+    const fpFrac = fullPricePct / 100;
 
-  // Weighted revenue factor: how many "EB-price-equivalents" each registrant generates
-  const wf = ebFrac + stdFrac * r + fpFrac * r * r;
+    // Weighted revenue factor: how many "EB-price-equivalents" each registrant generates
+    const wf = ebFrac + stdFrac * r + fpFrac * r * r;
+    if (!isFinite(wf) || wf === 0) return NextResponse.json({ error: "Invalid inputs" }, { status: 400 });
 
-  /* ─ sponsorship ──────────────────────────────────────────────── */
-  const netSponsorshipIncome = sponsorship * (1 - commission);
+    /* ─ sponsorship ────────────────────────────────────────────────── */
+    const netSponsorshipIncome = sponsorship * (1 - commission);
 
-  /* ─ pre-con ──────────────────────────────────────────────────── */
-  let preCon: PriceTier | null = null;
-  let preConRevenue = 0;
+    /* ─ pre-con ────────────────────────────────────────────────────── */
+    let preCon: PriceTier | null = null;
+    let preConRevenue = 0;
 
-  if (preConEnabled) {
-    const preConAttendees = Math.round(totalRegistrations * (preConAttendancePct / 100));
-    const preConExpenses = preConAttendees * honorariumPerAttendee;
-    const preConTarget = preConNetProfit + preConExpenses;
+    if (preConEnabled) {
+      const preConAttendees = Math.round(totalRegistrations * (preConAttendancePct / 100));
+      if (preConAttendees <= 0) return NextResponse.json({ error: "Invalid inputs" }, { status: 400 });
+      const preConExpenses = preConAttendees * honorariumPerAttendee;
+      const preConTarget = preConNetProfit + preConExpenses;
 
-    const preConEBExact = preConTarget / (preConAttendees * wf);
-    const preConEB = roundToNearest5(preConEBExact);
-    const preConStd = roundToNearest5(preConEB * r);
-    const preConFull = roundToNearest5(preConStd * r);
+      const preConEBExact = preConTarget / (preConAttendees * wf);
+      if (!isFinite(preConEBExact)) return NextResponse.json({ error: "Invalid inputs" }, { status: 400 });
+      const preConEB = roundToNearest5(preConEBExact);
+      const preConStd = roundToNearest5(preConEB * r);
+      const preConFull = roundToNearest5(preConStd * r);
 
-    preCon = { earlyBird: preConEB, standard: preConStd, fullPrice: preConFull };
-    preConRevenue = tierRevenue(preConAttendees, ebFrac, stdFrac, fpFrac, preCon);
+      preCon = { earlyBird: preConEB, standard: preConStd, fullPrice: preConFull };
+      preConRevenue = tierRevenue(preConAttendees, ebFrac, stdFrac, fpFrac, preCon);
+    }
+
+    /* ─ main con ───────────────────────────────────────────────────── */
+    const totalNeededFromTickets = expenses + netProfit - netSponsorshipIncome;
+    const mainConTarget = totalNeededFromTickets - (preConEnabled ? preConRevenue : 0);
+
+    const mainConEBExact = mainConTarget / (totalRegistrations * wf);
+    if (!isFinite(mainConEBExact)) return NextResponse.json({ error: "Invalid inputs" }, { status: 400 });
+    const mainConEB = roundToNearest5(mainConEBExact);
+    const mainConStd = roundToNearest5(mainConEB * r);
+    const mainConFull = roundToNearest5(mainConStd * r);
+
+    const mainCon: PriceTier = {
+      earlyBird: mainConEB,
+      standard: mainConStd,
+      fullPrice: mainConFull,
+    };
+
+    /* ─ summary ─────────────────────────────────────────────────────── */
+    const registrationRevenue = tierRevenue(
+      totalRegistrations, ebFrac, stdFrac, fpFrac, mainCon
+    );
+    const totalRevenue = netSponsorshipIncome + registrationRevenue + preConRevenue;
+    const actualNetProfit = totalRevenue - expenses;
+    const variance = totalRevenue - (expenses + netProfit);
+
+    const summary: CalculateSummary = {
+      registrationRevenue,
+      preConRevenue,
+      netSponsorshipIncome,
+      totalRevenue,
+      expenses,
+      netProfit: actualNetProfit,
+      variance,
+    };
+
+    return NextResponse.json({ mainCon, preCon, summary } satisfies CalculateResponse);
+  } catch {
+    return NextResponse.json({ error: "Invalid inputs" }, { status: 400 });
   }
-
-  /* ─ main con ─────────────────────────────────────────────────── */
-  const totalNeededFromTickets = expenses + netProfit - netSponsorshipIncome;
-  const mainConTarget = totalNeededFromTickets - (preConEnabled ? preConRevenue : 0);
-
-  const mainConEBExact = mainConTarget / (totalRegistrations * wf);
-  const mainConEB = roundToNearest5(mainConEBExact);
-  const mainConStd = roundToNearest5(mainConEB * r);
-  const mainConFull = roundToNearest5(mainConStd * r);
-
-  const mainCon: PriceTier = {
-    earlyBird: mainConEB,
-    standard: mainConStd,
-    fullPrice: mainConFull,
-  };
-
-  /* ─ summary ──────────────────────────────────────────────────── */
-  const registrationRevenue = tierRevenue(
-    totalRegistrations, ebFrac, stdFrac, fpFrac, mainCon
-  );
-  const totalRevenue = netSponsorshipIncome + registrationRevenue + preConRevenue;
-  const actualNetProfit = totalRevenue - expenses;
-  const variance = totalRevenue - (expenses + netProfit);
-
-  const summary: CalculateSummary = {
-    registrationRevenue,
-    preConRevenue,
-    netSponsorshipIncome,
-    totalRevenue,
-    expenses,
-    netProfit: actualNetProfit,
-    variance,
-  };
-
-  return NextResponse.json({ mainCon, preCon, summary } satisfies CalculateResponse);
 }
