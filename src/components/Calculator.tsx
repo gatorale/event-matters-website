@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import type { CalculateResponse } from "@/app/api/calculate/route";
 import type { CalcForm } from "@/types/calculator";
 import { downloadPDF } from "@/lib/export-pdf";
+import LogoLoader from "@/components/LogoLoader";
 
 /* ─── colours ──────────────────────────────────────────────────────────────── */
 const C = {
@@ -477,7 +478,14 @@ export default function Calculator() {
 
           {/* ─── RIGHT: Results ──────────────────────────────────────────────── */}
           <div style={{ minWidth: 0, position: "sticky", top: 80 }}>
-            {!results ? (
+            {loading && !results ? (
+              <div
+                className="rounded-lg flex items-center justify-center py-20"
+                style={{ background: C.tealTint }}
+              >
+                <LogoLoader size={52} label="Calculating…" labelColor={C.tealDark} />
+              </div>
+            ) : !results ? (
               <div
                 className="rounded-lg flex items-center justify-center py-20 text-center"
                 style={{ background: C.tealTint }}
@@ -829,23 +837,37 @@ function DownloadButton({
       onClick={onClick}
       disabled={loading}
       style={{
+        position: "relative",
         display: "flex", alignItems: "center", gap: 12,
         background: bg, color, border: "none",
         borderRadius: 6, padding: "12px 16px",
         cursor: loading ? "wait" : "pointer",
-        opacity: loading ? 0.7 : 1,
         textAlign: "left", width: "100%",
+        overflow: "hidden",
       }}
     >
-      <span style={{ fontSize: 22, lineHeight: 1 }}>{loading ? "⏳" : icon}</span>
+      <span style={{ fontSize: 22, lineHeight: 1 }}>{icon}</span>
       <span className="flex flex-col gap-0.5">
         <span style={{ fontSize: 14, fontWeight: 600, fontFamily: "var(--font-inter)" }}>
-          {loading ? "Generating…" : label}
+          {label}
         </span>
         <span style={{ fontSize: 11, opacity: 0.75, fontFamily: "var(--font-inter)" }}>
           {sublabel}
         </span>
       </span>
+
+      {loading && (
+        <div
+          style={{
+            position: "absolute", inset: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: bg,
+            borderRadius: 6,
+          }}
+        >
+          <LogoLoader size={32} label="Preparing your download…" labelColor={color} />
+        </div>
+      )}
     </button>
   );
 }
