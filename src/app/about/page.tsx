@@ -18,6 +18,14 @@ const C = {
   charcoal: "#2C2C2A",
 };
 
+const ABOUT_STATS = [
+  { value: "26",  label: "in-person conferences" },
+  { value: "214", label: "full-day workshops" },
+  { value: "122", label: "virtual & hybrid events" },
+  { value: "35",  label: "training courses" },
+  { value: "288", label: "newsletter editions" },
+];
+
 export default function AboutPage() {
   return (
     <>
@@ -60,167 +68,152 @@ function Body() {
       style={{ background: C.ivory }}
       className="px-6 py-16 lg:px-10"
     >
-      <div
-        className="mx-auto grid gap-16 lg:gap-20"
-        style={{
-          maxWidth: 1400,
-          gridTemplateColumns: "1fr",
-        }}
-      >
-        <div
-          className="grid gap-16"
-          style={{
-            gridTemplateColumns: "1fr",
-          }}
-        >
-          {/* Two-column on large screens */}
-          <div
-            className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-16 lg:gap-20"
-          >
-            {/* Left — copy */}
-            <div className="flex flex-col gap-8">
-              <p
-                className="text-xl leading-relaxed font-medium"
-                style={{
-                  color: C.plum,
-                  fontFamily: "var(--font-outfit)",
-                  fontSize: "1.2rem",
-                }}
-              >
-                I&apos;m Marcella McKeown, founder of Event Matters. I&apos;ve
-                spent over 18 years designing conferences and learning experiences
-                that bring people together to connect, share, and learn — while
-                delivering real value for the organizations that invest in them.
-              </p>
+      <div className="mx-auto" style={{ maxWidth: 1400 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-16 lg:gap-20">
 
-              {/* Pull quote */}
-              <blockquote
-                style={{
-                  borderLeft: `3px solid ${C.teal}`,
-                  paddingLeft: "1.25rem",
-                  background: "#ffffff",
-                  padding: "1.25rem 1.5rem",
-                  borderLeftWidth: 3,
-                  borderLeftStyle: "solid",
-                  borderLeftColor: C.teal,
-                }}
-              >
-                <p
-                  className="text-xl italic leading-relaxed"
-                  style={{ color: C.plum, fontFamily: "var(--font-outfit)", fontSize: "1.35rem" }}
-                >
-                  &ldquo;Vibrant and effortless on the surface, yet designed with
-                  care underneath.&rdquo;
-                </p>
-              </blockquote>
+          {/* Left — copy */}
+          <div className="flex flex-col gap-8">
+            <p
+              className="text-xl leading-relaxed font-medium"
+              style={{ color: C.plum, fontFamily: "var(--font-outfit)", fontSize: "1.2rem" }}
+            >
+              I&apos;m Marcella McKeown, the founder and methodologist behind
+              Event Matters.
+            </p>
 
-              <p
-                className="text-lg leading-relaxed"
-                style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-              >
-                Drawn to creative ideas and the stories uncovered by data, I find
-                real joy in blending the two to create event strategies and content
-                programs that feel vibrant and effortless on the surface yet
-                designed with care underneath.
-              </p>
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
+            >
+              I created this space to collect what I&apos;ve learned over eighteen
+              years of designing conferences and learning experiences. It&apos;s
+              where I can write plainly about my perspective, document my experience
+              and ideas, and share the tools and processes that have helped me do
+              this work well.
+            </p>
 
+            {/* Pull quote */}
+            <blockquote
+              style={{
+                borderLeft: `3px solid ${C.teal}`,
+                borderLeftStyle: "solid",
+                borderLeftColor: C.teal,
+                background: "#ffffff",
+                padding: "1.25rem 1.5rem",
+              }}
+            >
               <p
-                className="text-lg leading-relaxed"
-                style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
+                className="text-xl italic leading-relaxed"
+                style={{ color: C.plum, fontFamily: "var(--font-outfit)", fontSize: "1.35rem" }}
               >
-                Based out of southern Alberta, Canada, I consult with event teams
-                across North America and Europe.
+                &ldquo;Vibrant and effortless on the surface, yet designed with
+                care underneath.&rdquo;
               </p>
+            </blockquote>
+
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
+            >
+              I love a good challenge — figuring out how things fit together, how
+              to solve what isn&apos;t working, and how to align a company&apos;s
+              or client&apos;s goals with the experience and content they want to
+              create. I&apos;m drawn to creative ideas and the stories uncovered by
+              data, and I find real joy in blending the two to create event
+              strategies and content programs that feel vibrant and effortless on
+              the surface, yet designed with care underneath.
+            </p>
+
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
+            >
+              My goal is simple: to offer practical, real&#8209;world resources for
+              event professionals everywhere — and to keep building new ones as I
+              learn.
+            </p>
+          </div>
+
+          {/* Right — sidebar */}
+          <div className="flex flex-col gap-6">
+            {/* Headshot */}
+            <div
+              className="w-full overflow-hidden rounded-lg"
+              style={{ aspectRatio: "4/5" }}
+            >
+              <Image
+                src="/headshot.png"
+                alt="Marcella McKeown"
+                width={600}
+                height={750}
+                className="w-full h-full object-cover object-top"
+                priority
+              />
             </div>
 
-            {/* Right — sidebar */}
-            <div className="flex flex-col gap-6">
-              {/* Headshot */}
-              <div
-                className="w-full overflow-hidden rounded-lg"
-                style={{ aspectRatio: "4/5" }}
+            {/* Stats card */}
+            <div
+              className="rounded-lg p-6"
+              style={{
+                background: "#ffffff",
+                border: `1px solid ${C.plum}`,
+                borderTop: `3px solid ${C.plum}`,
+              }}
+            >
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-5"
+                style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
               >
-                <Image
-                  src="/headshot.png"
-                  alt="Marcella McKeown"
-                  width={600}
-                  height={750}
-                  className="w-full h-full object-cover object-top"
-                  priority
-                />
+                By the numbers
+              </p>
+              <div className="flex flex-col gap-4">
+                {ABOUT_STATS.map(({ value, label }) => (
+                  <div key={label} className="flex flex-col gap-0.5">
+                    <span
+                      className="text-2xl font-bold"
+                      style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
+                    >
+                      {value}
+                    </span>
+                    <span
+                      className="text-sm"
+                      style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              {/* Stats card */}
-              <div
-                className="rounded-lg p-6"
-                style={{
-                  background: "#ffffff",
-                  border: `1px solid ${C.plum}`,
-                  borderTop: `3px solid ${C.plum}`,
-                }}
+            {/* Connect card */}
+            <div
+              className="rounded-lg p-6"
+              style={{ background: "#ffffff", border: `1px solid ${C.plum}` }}
+            >
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
               >
-                <p
-                  className="text-xs font-semibold uppercase tracking-widest mb-5"
-                  style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
+                Connect
+              </p>
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="https://www.linkedin.com/in/marcella-mckeown-5075935/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
                 >
-                  By the numbers
-                </p>
-                <div className="flex flex-col gap-4">
-                  {[
-                    { stat: "18+ years", label: "in conference events" },
-                    { stat: "5,500",     label: "largest event managed — attendees" },
-                    { stat: "2",         label: "continents — North America & Europe" },
-                  ].map(({ stat, label }) => (
-                    <div key={stat} className="flex flex-col gap-0.5">
-                      <span
-                        className="text-2xl font-bold"
-                        style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
-                      >
-                        {stat}
-                      </span>
-                      <span
-                        className="text-sm"
-                        style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-                      >
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Connect card */}
-              <div
-                className="rounded-lg p-6"
-                style={{
-                  background: "#ffffff",
-                  border: `1px solid ${C.plum}`,
-                }}
-              >
-                <p
-                  className="text-xs font-semibold uppercase tracking-widest mb-4"
-                  style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
+                  LinkedIn →
+                </Link>
+                <Link
+                  href="mailto:info@eventmatters.co"
+                  className="text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
                 >
-                  Connect
-                </p>
-                <div className="flex flex-col gap-3">
-                  <Link
-                    href="https://www.linkedin.com/in/marcella-mckeown-5075935/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium transition-colors hover:opacity-80"
-                    style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
-                  >
-                    LinkedIn →
-                  </Link>
-                  <Link
-                    href="mailto:info@eventmatters.co"
-                    className="text-sm font-medium transition-colors hover:opacity-80"
-                    style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
-                  >
-                    Get in touch →
-                  </Link>
-                </div>
+                  Get in touch →
+                </Link>
               </div>
             </div>
           </div>
@@ -238,7 +231,6 @@ function CtaBand() {
       className="px-6 py-16 lg:px-10"
     >
       <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        {/* Copy */}
         <div className="flex flex-col gap-4">
           <p
             className="text-xs font-semibold uppercase tracking-widest"
@@ -262,7 +254,6 @@ function CtaBand() {
           </p>
         </div>
 
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 lg:justify-end">
           <Link
             href="mailto:info@eventmatters.co"

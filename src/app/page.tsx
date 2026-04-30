@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Calculator from "@/components/Calculator";
 
-/* ─── Colour constants (hardcoded per spec — no CSS vars on UI elements) ─── */
+/* ─── Colour constants ──────────────────────────────────────────────────────── */
 const C = {
   plum:      "#2D1B4E",
   plumDeep:  "#1E1238",
@@ -39,8 +39,8 @@ function Hero() {
           className="text-6xl md:text-7xl font-bold leading-tight mb-8"
           style={{ fontFamily: "var(--font-outfit)", color: C.ivory }}
         >
-          Built for the other{" "}
-          <em style={{ color: C.teal, fontStyle: "italic" }}>362 days.</em>
+          Built for the other<br />
+          362 days.
         </h1>
 
         <p
@@ -54,9 +54,9 @@ function Hero() {
           className="text-lg max-w-2xl leading-relaxed mb-10"
           style={{ color: "rgba(250,249,247,0.78)", fontFamily: "var(--font-inter)" }}
         >
-          Your event ends but your engagement shouldn&apos;t. Event Matters is a
-          space where event professionals come to think more clearly — practical
-          tools, direct content, and the thinking behind great conferences.
+          Your event ends but your engagement shouldn&apos;t. Event Matters gives
+          you the tools, clarity, and strategic thinking to keep people connected
+          long after the lights go down.
         </p>
 
         <Link
@@ -78,21 +78,39 @@ function Hero() {
 }
 
 /* ─── 2. Stats strip ──────────────────────────────────────────────────────── */
-function StatsStrip() {
-  const stats = [
-    { value: "18+",   label: "years in conference events" },
-    { value: "5,500", label: "largest event — attendees" },
-    { value: "362",   label: "days worth caring about" },
-    { value: "1",     label: "free tool, built for you" },
-  ];
+const NUMBER_STATS = [
+  { value: "26",  label: "in-person conferences" },
+  { value: "214", label: "full-day workshops" },
+  { value: "122", label: "virtual & hybrid events" },
+  { value: "35",  label: "training courses" },
+  { value: "288", label: "newsletter editions" },
+];
 
+function StatsStrip() {
   return (
     <section
       style={{ background: C.plumDeep }}
       className="px-6 py-10 lg:px-10"
     >
-      <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-8">
-        {stats.map((s) => (
+      <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        {/* Name credit — first cell, no big number */}
+        <div className="flex flex-col gap-1">
+          <span
+            className="text-base font-bold leading-snug"
+            style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
+          >
+            Marcella McKeown
+          </span>
+          <span
+            className="text-sm leading-snug"
+            style={{ color: "rgba(250,249,247,0.55)", fontFamily: "var(--font-inter)" }}
+          >
+            Event Matters, Founder
+          </span>
+        </div>
+
+        {/* Number stats */}
+        {NUMBER_STATS.map((s) => (
           <div key={s.label} className="flex flex-col gap-1">
             <span
               className="text-4xl font-bold"
@@ -113,7 +131,7 @@ function StatsStrip() {
   );
 }
 
-/* ─── 3. What we do ──────────────────────────────────────────────────────── */
+/* ─── 3. What I do ───────────────────────────────────────────────────────── */
 function WhatWeDo() {
   return (
     <section
@@ -125,16 +143,16 @@ function WhatWeDo() {
           className="text-xs font-semibold uppercase tracking-widest mb-3"
           style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
         >
-          What we do
+          What I do
         </p>
         <h2
           className="text-4xl font-bold mb-12"
           style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
         >
-          Tools and thinking for event professionals.
+          Insights and tools for event professionals.
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             eyebrow="Content & resources"
             title="Straight talk about what works in conferences."
@@ -144,10 +162,17 @@ function WhatWeDo() {
           />
           <Card
             eyebrow="Free tools"
-            title="The ticket pricing calculator."
-            body="Enter your net profit target, expenses, sponsorship income, and registration split — get the lowest viable ticket price for each tier, instantly. No sign-up to calculate."
+            title="Free Calculator"
+            body="The ticket pricing engine. Enter your net profit target, expenses, sponsorship income and commission rate, and registration purchase split to get the lowest viable ticket price, for each pricing tier, instantly."
             cta="Use the calculator →"
             href="#calculator"
+          />
+          <Card
+            eyebrow="Free tools"
+            title="Free Templates"
+            body="Practical, ready-to-use templates for everyday event work. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
+            cta="Explore Templates →"
+            href="#"
           />
         </div>
       </div>
@@ -221,7 +246,7 @@ function CalculatorBand() {
           className="text-4xl md:text-5xl font-bold leading-tight mb-6"
           style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
         >
-          What should you charge for your conference{" "}
+          What should you charge for conference{" "}
           <em style={{ color: C.teal, fontStyle: "italic" }}>tickets?</em>
         </h2>
         <p
@@ -229,44 +254,21 @@ function CalculatorBand() {
           style={{ color: "rgba(250,249,247,0.78)", fontFamily: "var(--font-inter)" }}
         >
           The only calculator built specifically for conference ticket pricing.
-          Enter your desired net profit, operational expenses, sponsorship income,
-          attendee numbers, and projected registration split across pricing tiers —
-          and get the lowest viable ticket price for each tier, instantly.
+          Enter your net profit target, expenses, sponsorship income and commission
+          rate, attendee numbers, and registration purchase split to get the lowest
+          viable ticket price for each tier.
         </p>
       </div>
     </section>
   );
 }
 
-/* ─── 5. Calculator (live — Phase 2) ────────────────────────────────────── */
+/* ─── 5. Calculator ──────────────────────────────────────────────────────── */
 function CalculatorSection() {
   return <Calculator />;
 }
 
-/* ─── 6. Marcella line ───────────────────────────────────────────────────── */
-function MarcellaLine() {
-  return (
-    <div
-      className="px-6 py-6 text-center"
-      style={{ background: "#ffffff" }}
-    >
-      <p
-        className="text-sm"
-        style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-      >
-        Built by{" "}
-        <Link
-          href="/about"
-          style={{ color: C.violet, borderBottom: `1px solid ${C.violet}`, paddingBottom: 1 }}
-        >
-          Marcella McKeown
-        </Link>
-      </p>
-    </div>
-  );
-}
-
-/* ─── 7. Blog section ────────────────────────────────────────────────────── */
+/* ─── 6. Blog section ────────────────────────────────────────────────────── */
 const BLOG_POSTS = [
   {
     tag:     "Strategy",
@@ -307,7 +309,7 @@ function BlogSection() {
               className="text-4xl font-bold"
               style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
             >
-              Latest thinking.
+              Recent posts.
             </h2>
           </div>
           <Link
@@ -363,7 +365,7 @@ function BlogSection() {
   );
 }
 
-/* ─── 8. Newsletter ──────────────────────────────────────────────────────── */
+/* ─── 7. Newsletter ──────────────────────────────────────────────────────── */
 function Newsletter() {
   return (
     <section
@@ -375,7 +377,7 @@ function Newsletter() {
           className="text-xs font-semibold uppercase tracking-widest mb-3"
           style={{ color: C.tealDark, fontFamily: "var(--font-inter)" }}
         >
-          Newsletter
+          Weekly posts
         </p>
         <h2
           className="text-3xl font-bold mb-4"
@@ -387,8 +389,8 @@ function Newsletter() {
           className="text-base leading-relaxed mb-8"
           style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
         >
-          Practical articles, tools, and perspectives — delivered to your inbox.
-          No noise. Unsubscribe any time.
+          Practical thinking for event professionals. Real-world ideas for
+          conference design and year-round engagement.
         </p>
         <Link
           href="https://blog.eventmatters.co#subscribe"

@@ -397,39 +397,39 @@ export default function Calculator() {
 
             <SectionHead title="Conference financials" />
 
-            <Field label="Desired net profit" prefix="$"
+            <Field label="Target net profit" prefix="$"
               value={form.netProfit} onChange={(v) => set("netProfit", v)}
-              tip="The profit you want to keep after all expenses are paid." />
+              tip="The amount of expected profit after all expenses are paid." />
 
             <Field label="Total operating expenses" prefix="$"
               value={form.expenses} onChange={(v) => set("expenses", v)}
-              tip="All costs to run the conference — venue, AV, catering, speakers, etc. Exclude pre-con honorariums if using the pre-con section." />
+              tip="Total event costs, including venue, AV, catering, speakers, F&B, etc. Pre-conference honorarium excluded if using the pre-conference add-on." />
 
-            <Field label="Gross sponsorship income" prefix="$"
+            <Field label="Gross sponsorship revenue" prefix="$"
               value={form.sponsorship} onChange={(v) => set("sponsorship", v)}
-              tip="Total sponsorship revenue before deducting any platform or agency commission." />
+              tip="Total sponsorship revenue before deducting sponsorship commission rate." />
 
-            <Field label="Platform / agency commission" suffix="%"
+            <Field label="Sponsorship commission rate" suffix="%"
               value={form.commissionRate} onChange={(v) => set("commissionRate", v)}
-              tip="Commission rate deducted from gross sponsorship income. Enter 0 if none applies." min={0} max={100} step={0.5} />
+              tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies." min={0} max={100} step={0.5} />
 
             <SectionHead title="Registration" />
 
-            <Field label="Total registrations" prefix="#"
+            <Field label="Total projected registrants" prefix="#"
               value={form.totalRegistrations} onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
               tip="Expected number of paid conference registrants." min={1} />
 
             <Field label="Tier price increase rate" suffix="%"
               value={form.priceIncreaseRate} onChange={(v) => set("priceIncreaseRate", v)}
-              tip="How much each tier costs above the previous. Standard = Early Bird × (1 + this rate). Full Price = Standard × (1 + this rate)." min={0} max={100} step={1} />
+              tip="The rate of increase between tier prices." min={0} max={100} step={1} />
 
             <div>
               <label
                 className="text-sm font-medium block mb-2"
                 style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
               >
-                Registration split
-                <Tip text="How your attendees are expected to split across the three pricing tiers. Must add up to 100%." />
+                Registration purchase split
+                <Tip text="The rate at which you expect attendees to register per tier price across early bird, standard, and full price. Must add up to 100%." />
               </label>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                 {(["earlyBirdPct", "standardPct", "fullPricePct"] as const).map((key, i) => (
@@ -485,17 +485,17 @@ export default function Calculator() {
 
               {form.preConEnabled && (
                 <div className="flex flex-col gap-4 mt-4">
-                  <Field label="Pre-con net profit target" prefix="$"
+                  <Field label="Pre-conference net profit target" prefix="$"
                     value={form.preConNetProfit} onChange={(v) => set("preConNetProfit", v)}
-                    tip="The profit you want the pre-con workshop to generate, above its own costs." />
+                    tip="The profit you want the pre-conference workshop to generate, above its own costs." />
 
-                  <Field label="Honorarium per pre-con attendee" prefix="$"
+                  <Field label="Honorarium per pre-conference attendee" prefix="$"
                     value={form.honorariumPerAttendee} onChange={(v) => set("honorariumPerAttendee", v)}
-                    tip="Speaker or facilitator honorarium cost per pre-con attendee. This is the main variable cost for the workshop." />
+                    tip="Speaker or facilitator honorarium cost per pre-conference attendee. This is the main variable cost for the workshop." />
 
-                  <Field label="Pre-con attendance" suffix="%"
+                  <Field label="Pre-conference attendance" suffix="%"
                     value={form.preConAttendancePct} onChange={(v) => set("preConAttendancePct", v)}
-                    tip="Percentage of main conference registrants expected to also attend the pre-con workshop." min={1} max={100} />
+                    tip="Percentage of main conference registrants expected to attend a pre-conference workshop." min={1} max={100} />
                 </div>
               )}
             </div>
@@ -590,7 +590,7 @@ export default function Calculator() {
                   <SummaryRow label="Net sponsorship income" value={`$${fmt(results.summary.netSponsorshipIncome)}`} />
                   <SummaryRow label="Registration revenue" value={`$${fmt(results.summary.registrationRevenue)}`} />
                   {results.preCon && (
-                    <SummaryRow label="Pre-con revenue" value={`$${fmt(results.summary.preConRevenue)}`} indent />
+                    <SummaryRow label="Pre-conference revenue" value={`$${fmt(results.summary.preConRevenue)}`} indent />
                   )}
                   <SummaryRow label="Total revenue" value={`$${fmt(results.summary.totalRevenue)}`} highlight />
                   <SummaryRow label="Total expenses" value={`$${fmt(results.summary.expenses)}`} />
