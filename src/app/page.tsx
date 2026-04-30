@@ -41,7 +41,7 @@ function Hero() {
           style={{ fontFamily: "var(--font-outfit)", color: C.ivory }}
         >
           Built for the other<br />
-          362 days.
+          <span style={{ color: C.teal }}>362 days.</span>
         </h1>
 
         <p
@@ -80,6 +80,7 @@ function Hero() {
 
 /* ─── 2. Stats strip ──────────────────────────────────────────────────────── */
 const NUMBER_STATS = [
+  { value: "18+", label: "years of community & events" },
   { value: "26",  label: "in-person conferences" },
   { value: "214", label: "full-day workshops" },
   { value: "122", label: "virtual & hybrid events" },
@@ -97,14 +98,14 @@ function StatsStrip() {
         {/* Name credit — first cell, no big number */}
         <div className="flex flex-col gap-1">
           <span
-            className="text-base font-bold leading-snug"
+            className="text-4xl font-bold"
             style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
           >
             Marcella McKeown
           </span>
           <span
             className="text-sm leading-snug"
-            style={{ color: "rgba(250,249,247,0.55)", fontFamily: "var(--font-inter)" }}
+            style={{ color: "rgba(250,249,247,0.65)", fontFamily: "var(--font-inter)" }}
           >
             Event Matters, Founder
           </span>
@@ -150,28 +151,28 @@ function WhatWeDo() {
           className="text-4xl font-bold mb-12"
           style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
         >
-          Insights and tools for event professionals.
+          Practical thoughts, tools, and resources.
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             eyebrow="Content & resources"
-            title="Straight talk about what works in conferences."
+            title="CONTENT & IDEAS"
             body="Practical articles, frameworks, and perspectives on event strategy, speaker programmes, audience engagement, and the year-round work that makes events worth attending."
             cta="Read the blog →"
             href="https://blog.eventmatters.co"
           />
           <Card
             eyebrow="Free tools"
-            title="Free Calculator"
+            title="Ticket Calculator"
             body="The ticket pricing engine. Enter your net profit target, expenses, sponsorship income and commission rate, and registration purchase split to get the lowest viable ticket price, for each pricing tier, instantly."
             cta="Use the calculator →"
             href="#calculator"
           />
           <Card
             eyebrow="Free tools"
-            title="Free Templates"
-            body="Practical, ready-to-use templates for everyday event work. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
+            title="FREE RESOURCES"
+            body="Everyday Templates. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
             cta="Explore Templates →"
             href="#"
           />
@@ -384,14 +385,13 @@ function Newsletter() {
           className="text-3xl font-bold mb-4"
           style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
         >
-          Thinking for event professionals.
+          Practical thinking for event professionals.
         </h2>
         <p
           className="text-base leading-relaxed mb-8"
           style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
         >
-          Practical thinking for event professionals. Real-world ideas for
-          conference design and year-round engagement.
+          Real-world ideas and insights on conference design and year-round engagement.
         </p>
         <NewsletterForm />
       </div>

@@ -19,6 +19,7 @@ const C = {
 };
 
 const ABOUT_STATS = [
+  { value: "18+", label: "years of community & events" },
   { value: "26",  label: "in-person conferences" },
   { value: "214", label: "full-day workshops" },
   { value: "122", label: "virtual & hybrid events" },
@@ -139,16 +140,48 @@ function Body() {
             {/* Headshot */}
             <div
               className="w-full overflow-hidden rounded-lg"
-              style={{ aspectRatio: "4/5" }}
+              style={{ aspectRatio: "3/4" }}
             >
               <Image
                 src="/headshot.png"
                 alt="Marcella McKeown"
                 width={600}
                 height={750}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: "center 20%" }}
                 priority
               />
+            </div>
+
+            {/* Connect card */}
+            <div
+              className="rounded-lg p-6"
+              style={{ background: "#ffffff", border: `1px solid ${C.plum}` }}
+            >
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
+              >
+                Connect
+              </p>
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="https://www.linkedin.com/in/marcella-mckeown-5075935/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
+                >
+                  LinkedIn →
+                </Link>
+                <Link
+                  href="mailto:info@eventmatters.co"
+                  className="text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
+                >
+                  Get in touch →
+                </Link>
+              </div>
             </div>
 
             {/* Stats card */}
@@ -183,37 +216,6 @@ function Body() {
                     </span>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Connect card */}
-            <div
-              className="rounded-lg p-6"
-              style={{ background: "#ffffff", border: `1px solid ${C.plum}` }}
-            >
-              <p
-                className="text-xs font-semibold uppercase tracking-widest mb-4"
-                style={{ color: C.plum, fontFamily: "var(--font-inter)" }}
-              >
-                Connect
-              </p>
-              <div className="flex flex-col gap-3">
-                <Link
-                  href="https://www.linkedin.com/in/marcella-mckeown-5075935/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium transition-colors hover:opacity-80"
-                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
-                >
-                  LinkedIn →
-                </Link>
-                <Link
-                  href="mailto:info@eventmatters.co"
-                  className="text-sm font-medium transition-colors hover:opacity-80"
-                  style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1, alignSelf: "flex-start" }}
-                >
-                  Get in touch →
-                </Link>
               </div>
             </div>
           </div>
@@ -260,7 +262,7 @@ function CtaBand() {
             className="inline-flex items-center justify-center px-7 py-3 rounded-sm text-base font-medium transition-opacity hover:opacity-90"
             style={{ background: C.teal, color: C.plum, fontFamily: "var(--font-inter)" }}
           >
-            Work with me →
+            Get in touch →
           </Link>
           <Link
             href="https://blog.eventmatters.co"

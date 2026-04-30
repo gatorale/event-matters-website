@@ -16,10 +16,11 @@ export default function Nav() {
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <LogoMark />
           <span
-            className="text-lg font-semibold leading-none tracking-tight"
+            className="font-semibold leading-none tracking-tight"
             style={{
               fontFamily: "var(--font-outfit)",
               color: "#FAF9F7",
+              fontSize: "1.7rem",
             }}
           >
             Event{" "}
@@ -33,7 +34,7 @@ export default function Nav() {
           <NavLink href="/#calculator">Tools</NavLink>
           <NavLink href="/about">About</NavLink>
           <Link
-            href="https://blog.eventmatters.co#subscribe"
+            href="https://blog.eventmatters.co"
             className="rounded-sm px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
             style={{
               background: "#00D4AA",
@@ -72,7 +73,7 @@ export default function Nav() {
             About
           </MobileNavLink>
           <Link
-            href="https://blog.eventmatters.co#subscribe"
+            href="https://blog.eventmatters.co"
             onClick={() => setMenuOpen(false)}
             className="self-start rounded-sm px-4 py-2 text-sm font-medium mt-1"
             style={{ background: "#00D4AA", color: "#2D1B4E" }}

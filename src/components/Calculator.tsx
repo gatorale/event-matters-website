@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { CalculateResponse } from "@/app/api/calculate/route";
 import type { CalcForm } from "@/types/calculator";
 import { downloadPDF } from "@/lib/export-pdf";
@@ -112,7 +112,7 @@ function Field({
           }}>{prefix}</span>
         )}
         <input
-          type="number" value={value} min={min} max={max} step={step}
+          type="number" value={value === 0 ? "" : value} placeholder="0" min={min} max={max} step={step}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
           style={{
             width: "100%", background: inputBg,
@@ -219,7 +219,7 @@ function Disclaimer() {
 
 /* ─── Main calculator ───────────────────────────────────────────────────────── */
 export default function Calculator() {
-  const [form, setForm] = useState<FormState>(DEFAULTS);
+  const [form, setForm] = useState<FormState>(EMPTY);
   const [results, setResults] = useState<CalculateResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -255,6 +255,12 @@ export default function Calculator() {
 
   const calculate = useCallback(() => calculateWith(form), [calculateWith, form]);
 
+  useEffect(() => {
+    if (!results || !splitValid) return;
+    calculateWith(form);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
+
   const reset = useCallback(() => {
     setForm(EMPTY);
     setResults(null);
@@ -267,15 +273,6 @@ export default function Calculator() {
   return (
     <div style={{ background: "#ffffff" }} className="px-6 py-12 lg:px-10">
       <div className="mx-auto" style={{ maxWidth: 1100 }}>
-
-        {/* Sample numbers banner */}
-        <div className="flex items-start gap-3 rounded-md px-4 py-3 mb-8" style={{ background: C.tealTint }}>
-          <span style={{ color: C.teal, fontSize: 16, lineHeight: 1.5 }}>ℹ</span>
-          <p className="text-sm" style={{ color: C.tealDark, fontFamily: "var(--font-inter)" }}>
-            The numbers below are examples only. Replace them with your own event
-            figures to get your personalised ticket prices.
-          </p>
-        </div>
 
         {/* Two-column grid */}
         <div
@@ -329,7 +326,8 @@ export default function Calculator() {
                     <div style={{ position: "relative" }}>
                       <input
                         type="number" min={0} max={100} step={1}
-                        value={form[key]}
+                        value={form[key] === 0 ? "" : form[key]}
+                        placeholder="0"
                         onChange={(e) => set(key, parseFloat(e.target.value) || 0)}
                         style={{
                           width: "100%", background: C.tealTint,
