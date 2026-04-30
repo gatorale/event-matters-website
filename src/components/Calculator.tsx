@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from "react";
 import type { CalculateResponse } from "@/app/api/calculate/route";
+import type { CalcForm } from "@/types/calculator";
+import { downloadPDF } from "@/lib/export-pdf";
 
 /* ─── colours (hardcoded per spec) ────────────────────────────────────────── */
 const C = {
@@ -31,7 +33,7 @@ const DEFAULTS = {
   preConAttendancePct: 30,
 };
 
-type FormState = typeof DEFAULTS;
+type FormState = CalcForm;
 
 function fmt(n: number, decimals = 0) {
   return n.toLocaleString("en-CA", {
@@ -652,7 +654,7 @@ export default function Calculator() {
 
       {/* Email gate modal */}
       {showGate && results && (
-        <EmailGate onClose={() => setShowGate(false)} results={results} />
+        <EmailGate onClose={() => setShowGate(false)} results={results} form={form} />
       )}
 
       {/* Tooltip CSS */}
@@ -670,9 +672,11 @@ export default function Calculator() {
 function EmailGate({
   onClose,
   results,
+  form,
 }: {
   onClose: () => void;
   results: CalculateResponse;
+  form: FormState;
 }) {
   const [mode, setMode] = useState<"subscribe" | "existing">("subscribe");
   const [firstName, setFirstName] = useState("");
@@ -680,6 +684,7 @@ function EmailGate({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -704,6 +709,37 @@ function EmailGate({
     }
   }
 
+  async function handlePDF() {
+    setDownloading("pdf");
+    try {
+      await downloadPDF(results, form);
+    } finally {
+      setDownloading(null);
+    }
+  }
+
+  async function handleExcel() {
+    setDownloading("excel");
+    try {
+      const res = await fetch("/api/export/excel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ results, form }),
+      });
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const d = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `event-matters-ticket-pricing-${d}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(null);
+    }
+  }
+
   return (
     <div
       style={{
@@ -719,7 +755,7 @@ function EmailGate({
           background: "#ffffff",
           borderRadius: 8,
           padding: 32,
-          maxWidth: 420,
+          maxWidth: 440,
           width: "100%",
           position: "relative",
         }}
@@ -737,22 +773,61 @@ function EmailGate({
         </button>
 
         {done ? (
-          <div className="text-center py-4">
+          /* ─── Success: download buttons ──────────────────────────────── */
+          <div className="flex flex-col gap-5">
+            <div>
+              <p
+                className="text-xl font-bold mb-1"
+                style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
+              >
+                You&apos;re all set ✓
+              </p>
+              <p className="text-sm" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
+                Download your results in any format. A confirmation has been sent to{" "}
+                <strong>{email}</strong>.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <DownloadButton
+                label="Download PDF"
+                sublabel="Branded report — print or share"
+                icon="📄"
+                loading={downloading === "pdf"}
+                onClick={handlePDF}
+                bg="#2D1B4E"
+                color="#FAF9F7"
+              />
+              <DownloadButton
+                label="Download Excel"
+                sublabel="3 sheets: summary, pre-con, methodology"
+                icon="📊"
+                loading={downloading === "excel"}
+                onClick={handleExcel}
+                bg="#00D4AA"
+                color="#2D1B4E"
+              />
+              <DownloadButton
+                label="Open in Google Sheets"
+                sublabel="Download Excel — then upload to Google Drive"
+                icon="🔗"
+                loading={downloading === "sheets"}
+                onClick={handleExcel}
+                bg="#E8FAF6"
+                color="#005C47"
+                border="1px solid rgba(0,212,170,0.4)"
+              />
+            </div>
+
             <p
-              className="text-2xl font-bold mb-3"
-              style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
+              className="text-xs text-center"
+              style={{ color: "rgba(44,44,42,0.45)", fontFamily: "var(--font-inter)" }}
             >
-              Check your inbox
-            </p>
-            <p
-              className="text-sm leading-relaxed"
-              style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-            >
-              We&apos;ve sent your download link to <strong>{email}</strong>.
-              Check your spam folder if it doesn&apos;t arrive within a few minutes.
+              Google Sheets: after downloading the Excel file, upload it to Google Drive → right-click → Open with Google Sheets.
             </p>
           </div>
         ) : (
+          /* ─── Gate form ──────────────────────────────────────────────── */
           <>
             <p
               className="text-xl font-bold mb-1"
@@ -764,7 +839,7 @@ function EmailGate({
               className="text-sm mb-6"
               style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
             >
-              Enter your email to get a PDF, Excel, and Google Sheets version of
+              Enter your email to get PDF, Excel, and Google Sheets versions of
               your results — free.
             </p>
 
@@ -782,7 +857,7 @@ function EmailGate({
                     fontFamily: "var(--font-inter)", fontWeight: mode === m ? 600 : 400,
                   }}
                 >
-                  {m === "subscribe" ? "New subscriber" : "Already subscribed"}
+                  {m === "subscribe" ? "New subscriber" : "Already subscribed?"}
                 </button>
               ))}
             </div>
@@ -824,29 +899,63 @@ function EmailGate({
                 type="submit"
                 disabled={submitting}
                 style={{
-                  background: "#2D1B4E",
-                  color: "#FAF9F7",
-                  border: "none",
-                  borderRadius: 4,
-                  padding: "10px 0",
-                  fontSize: 14,
-                  fontWeight: 600,
+                  background: "#2D1B4E", color: "#FAF9F7",
+                  border: "none", borderRadius: 4,
+                  padding: "10px 0", fontSize: 14, fontWeight: 600,
                   fontFamily: "var(--font-inter)",
                   cursor: submitting ? "not-allowed" : "pointer",
                   opacity: submitting ? 0.7 : 1,
                 }}
               >
-                {submitting ? "Sending…" : mode === "subscribe" ? "Subscribe & download →" : "Verify & download →"}
+                {submitting
+                  ? "Confirming…"
+                  : mode === "subscribe"
+                  ? "Subscribe & get downloads →"
+                  : "Verify & get downloads →"}
               </button>
               <p className="text-xs text-center" style={{ color: "rgba(44,44,42,0.5)", fontFamily: "var(--font-inter)" }}>
                 {mode === "subscribe"
                   ? "You'll be added to the Event Matters newsletter. Unsubscribe any time."
-                  : "We'll verify your subscription and send the download link."}
+                  : "We'll verify your subscription and unlock your downloads."}
               </p>
             </form>
           </>
         )}
       </div>
     </div>
+  );
+}
+
+/* ─── Download button ───────────────────────────────────────────────────────── */
+function DownloadButton({
+  label, sublabel, icon, loading, onClick, bg, color, border: borderStyle,
+}: {
+  label: string; sublabel: string; icon: string;
+  loading: boolean; onClick: () => void;
+  bg: string; color: string; border?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      style={{
+        display: "flex", alignItems: "center", gap: 12,
+        background: bg, color, border: borderStyle ?? "none",
+        borderRadius: 6, padding: "12px 16px",
+        cursor: loading ? "wait" : "pointer",
+        opacity: loading ? 0.7 : 1,
+        textAlign: "left", width: "100%",
+      }}
+    >
+      <span style={{ fontSize: 22, lineHeight: 1 }}>{loading ? "⏳" : icon}</span>
+      <span className="flex flex-col gap-0.5">
+        <span style={{ fontSize: 14, fontWeight: 600, fontFamily: "var(--font-inter)" }}>
+          {loading ? "Generating…" : label}
+        </span>
+        <span style={{ fontSize: 11, opacity: 0.75, fontFamily: "var(--font-inter)" }}>
+          {sublabel}
+        </span>
+      </span>
+    </button>
   );
 }
