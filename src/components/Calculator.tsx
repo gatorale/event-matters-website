@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import type { CalculateResponse } from "@/app/api/calculate/route";
 import type { CalcForm } from "@/types/calculator";
 import { downloadPDF } from "@/lib/export-pdf";
@@ -255,16 +255,16 @@ export default function Calculator() {
 
   const calculate = useCallback(() => calculateWith(form), [calculateWith, form]);
 
-  useEffect(() => {
+  const maybeRecalc = useCallback((next: FormState) => {
     if (!results) return;
-    if (!splitValid) return;
-    if (form.totalRegistrations <= 0) return;
-    if (form.expenses <= 0) return;
-    if (form.priceIncreaseRate <= 0) return;
-    if (form.preConEnabled && form.preConAttendancePct <= 0) return;
-    calculateWith(form);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
+    const splitOk = Math.abs(next.earlyBirdPct + next.standardPct + next.fullPricePct - 100) < 0.01;
+    if (!splitOk) return;
+    if (next.totalRegistrations <= 0) return;
+    if (next.expenses <= 0) return;
+    if (next.priceIncreaseRate <= 0) return;
+    if (next.preConEnabled && next.preConAttendancePct <= 0) return;
+    calculateWith(next);
+  }, [results, calculateWith]);
 
   const reset = useCallback(() => {
     setForm(EMPTY);
@@ -281,7 +281,7 @@ export default function Calculator() {
 
         {/* Two-column grid */}
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, alignItems: "start" }}
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, alignItems: "flex-start" }}
           className="calc-grid"
         >
           {/* ─── LEFT: Inputs ─────────────────────────────────────────────── */}
@@ -291,19 +291,23 @@ export default function Calculator() {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="Target net profit" prefix="$"
-                value={form.netProfit} onChange={(v) => set("netProfit", v)}
+                value={form.netProfit}
+                onChange={(v) => { const n = { ...form, netProfit: v }; setForm(n); maybeRecalc(n); }}
                 tip="The amount of expected profit after all expenses are paid." />
 
               <Field label="Total operating expenses" prefix="$"
-                value={form.expenses} onChange={(v) => set("expenses", v)}
+                value={form.expenses}
+                onChange={(v) => { const n = { ...form, expenses: v }; setForm(n); maybeRecalc(n); }}
                 tip="Total event costs, including venue, AV, catering, speakers, F&B, etc. Pre-conference honorarium excluded if using the pre-conference add-on." />
 
               <Field label="Gross sponsorship revenue" prefix="$"
-                value={form.sponsorship} onChange={(v) => set("sponsorship", v)}
+                value={form.sponsorship}
+                onChange={(v) => { const n = { ...form, sponsorship: v }; setForm(n); maybeRecalc(n); }}
                 tip="Total sponsorship revenue before deducting sponsorship commission rate." />
 
               <Field label="Sponsorship commission rate" suffix="%"
-                value={form.commissionRate} onChange={(v) => set("commissionRate", v)}
+                value={form.commissionRate}
+                onChange={(v) => { const n = { ...form, commissionRate: v }; setForm(n); maybeRecalc(n); }}
                 tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies."
                 min={0} max={100} step={0.5} />
             </div>
@@ -313,11 +317,12 @@ export default function Calculator() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="Total projected registrants" prefix="#"
                 value={form.totalRegistrations}
-                onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
+                onChange={(v) => { const n = { ...form, totalRegistrations: Math.max(1, Math.round(v)) }; setForm(n); maybeRecalc(n); }}
                 tip="Expected number of paid conference registrants." min={1} />
 
               <Field label="Tier price increase rate" suffix="%"
-                value={form.priceIncreaseRate} onChange={(v) => set("priceIncreaseRate", v)}
+                value={form.priceIncreaseRate}
+                onChange={(v) => { const n = { ...form, priceIncreaseRate: v }; setForm(n); maybeRecalc(n); }}
                 tip="The rate of increase between tier prices." min={0} max={100} step={1} />
             </div>
 
@@ -337,7 +342,7 @@ export default function Calculator() {
                         type="number" min={0} max={100} step={1}
                         value={form[key] === 0 ? "" : form[key]}
                         placeholder="0"
-                        onChange={(e) => set(key, parseFloat(e.target.value) || 0)}
+                        onChange={(e) => { const v = parseFloat(e.target.value) || 0; const n = { ...form, [key]: v }; setForm(n); maybeRecalc(n); }}
                         style={{
                           width: "100%", background: C.tealTint,
                           border: `1px solid ${splitValid ? "rgba(0,212,170,0.3)" : "#ff4444"}`,
@@ -367,10 +372,9 @@ export default function Calculator() {
                   type="checkbox"
                   checked={form.preConEnabled}
                   onChange={(e) => {
-                    const newEnabled = e.target.checked;
-                    const newForm = { ...form, preConEnabled: newEnabled };
-                    setForm(newForm);
-                    if (results) calculateWith(newForm);
+                    const n = { ...form, preConEnabled: e.target.checked };
+                    setForm(n);
+                    maybeRecalc(n);
                   }}
                   style={{ accentColor: C.teal, width: 16, height: 16 }}
                 />
@@ -382,17 +386,20 @@ export default function Calculator() {
               {form.preConEnabled && (
                 <div className="flex flex-col gap-4 mt-4">
                   <Field label="Pre-conference net profit target" prefix="$"
-                    value={form.preConNetProfit} onChange={(v) => set("preConNetProfit", v)}
+                    value={form.preConNetProfit}
+                    onChange={(v) => { const n = { ...form, preConNetProfit: v }; setForm(n); maybeRecalc(n); }}
                     tip="The profit you want the pre-conference workshop to generate, above its own costs."
                     bg={C.ivory} />
 
                   <Field label="Honorarium per pre-conference attendee" prefix="$"
-                    value={form.honorariumPerAttendee} onChange={(v) => set("honorariumPerAttendee", v)}
+                    value={form.honorariumPerAttendee}
+                    onChange={(v) => { const n = { ...form, honorariumPerAttendee: v }; setForm(n); maybeRecalc(n); }}
                     tip="Speaker or facilitator honorarium cost per pre-conference attendee. This is the main variable cost for the workshop."
                     bg={C.ivory} />
 
                   <Field label="Pre-conference attendance" suffix="%"
-                    value={form.preConAttendancePct} onChange={(v) => set("preConAttendancePct", v)}
+                    value={form.preConAttendancePct}
+                    onChange={(v) => { const n = { ...form, preConAttendancePct: v }; setForm(n); maybeRecalc(n); }}
                     tip="Percentage of main conference registrants expected to attend a pre-conference workshop."
                     min={1} max={100} bg={C.ivory} />
                 </div>
@@ -403,11 +410,12 @@ export default function Calculator() {
             <button
               onClick={calculate}
               disabled={loading || !splitValid}
-              className="w-full rounded-sm py-3 text-base font-semibold transition-opacity"
+              className="w-full rounded-sm py-3 text-base transition-opacity"
               style={{
                 backgroundColor: "#2D1B4E",
                 color: "#FAF9F7",
                 fontFamily: "var(--font-inter)",
+                fontWeight: 600,
                 cursor: loading || !splitValid ? "not-allowed" : "pointer",
                 opacity: loading || !splitValid ? 0.6 : 1,
                 border: "none",
@@ -438,7 +446,7 @@ export default function Calculator() {
                 {/* Main conference prices */}
                 <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: C.ivory }}>
                   <p className="text-xs font-semibold uppercase tracking-widest mb-4"
-                    style={{ color: C.plum, fontFamily: "var(--font-inter)" }}>
+                    style={{ color: "#2D1B4E", fontFamily: "var(--font-inter)" }}>
                     Main conference prices
                   </p>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -485,10 +493,10 @@ export default function Calculator() {
                 </div>
 
                 {/* Download */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3" style={{ marginTop: "auto" }}>
                   <button
-                    className="w-full rounded-sm py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-                    style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)", border: "none", cursor: "pointer" }}
+                    className="w-full rounded-sm py-2.5 text-sm transition-opacity hover:opacity-90"
+                    style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)", fontWeight: 600, border: "none", cursor: "pointer" }}
                     onClick={() => setShowGate(true)}
                   >
                     Download summary →
