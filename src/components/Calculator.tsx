@@ -224,6 +224,7 @@ export default function Calculator() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showGate, setShowGate] = useState(false);
+  const [splitTouched, setSplitTouched] = useState(false);
 
   const set = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -267,6 +268,7 @@ export default function Calculator() {
     setForm(EMPTY);
     setResults(null);
     setError(null);
+    setSplitTouched(false);
   }, []);
 
   const splitValid =
@@ -339,10 +341,10 @@ export default function Calculator() {
                         type="number" min={0} max={100} step={1}
                         value={form[key] === 0 ? "" : form[key]}
                         placeholder="0"
-                        onChange={(e) => { const v = parseFloat(e.target.value) || 0; const n = { ...form, [key]: v }; setForm(n); maybeRecalc(n); }}
+                        onChange={(e) => { setSplitTouched(true); const v = parseFloat(e.target.value) || 0; const n = { ...form, [key]: v }; setForm(n); maybeRecalc(n); }}
                         style={{
                           width: "100%", background: C.tealTint,
-                          border: `1px solid ${splitValid ? "rgba(0,212,170,0.3)" : "#ff4444"}`,
+                          border: `1px solid ${splitTouched && !splitValid ? "#ff4444" : "rgba(0,212,170,0.3)"}`,
                           borderRadius: 4, padding: "6px 28px 6px 10px",
                           fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)", outline: "none",
                         }}
@@ -352,7 +354,7 @@ export default function Calculator() {
                   </div>
                 ))}
               </div>
-              {!splitValid && (
+              {splitTouched && !splitValid && (
                 <p className="text-xs mt-1" style={{ color: "#cc0000" }}>
                   Must sum to 100% (currently {form.earlyBirdPct + form.standardPct + form.fullPricePct}%)
                 </p>
