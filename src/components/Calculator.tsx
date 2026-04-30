@@ -5,7 +5,7 @@ import type { CalculateResponse } from "@/app/api/calculate/route";
 import type { CalcForm } from "@/types/calculator";
 import { downloadPDF } from "@/lib/export-pdf";
 
-/* ─── colours (hardcoded per spec) ────────────────────────────────────────── */
+/* ─── colours ──────────────────────────────────────────────────────────────── */
 const C = {
   plum:     "#2D1B4E",
   teal:     "#00D4AA",
@@ -16,8 +16,8 @@ const C = {
   charcoal: "#2C2C2A",
 };
 
-/* ─── default sample values ────────────────────────────────────────────────── */
-const DEFAULTS = {
+/* ─── form states ───────────────────────────────────────────────────────────── */
+const DEFAULTS: CalcForm = {
   netProfit: 50000,
   expenses: 200000,
   sponsorship: 50000,
@@ -31,6 +31,22 @@ const DEFAULTS = {
   preConNetProfit: 20000,
   honorariumPerAttendee: 200,
   preConAttendancePct: 30,
+};
+
+const EMPTY: CalcForm = {
+  netProfit: 0,
+  expenses: 0,
+  sponsorship: 0,
+  commissionRate: 0,
+  totalRegistrations: 0,
+  priceIncreaseRate: 0,
+  earlyBirdPct: 0,
+  standardPct: 0,
+  fullPricePct: 0,
+  preConEnabled: false,
+  preConNetProfit: 0,
+  honorariumPerAttendee: 0,
+  preConAttendancePct: 0,
 };
 
 type FormState = CalcForm;
@@ -48,41 +64,21 @@ function Tip({ text }: { text: string }) {
     <span className="tip-wrap" style={{ position: "relative", display: "inline-block", marginLeft: 4 }}>
       <span
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 15,
-          height: 15,
-          borderRadius: "50%",
-          border: `1px solid ${C.teal}`,
-          color: C.teal,
-          fontSize: 10,
-          fontWeight: 600,
-          cursor: "default",
-          lineHeight: 1,
-          fontFamily: "var(--font-inter)",
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 15, height: 15, borderRadius: "50%",
+          border: `1px solid ${C.teal}`, color: C.teal,
+          fontSize: 10, fontWeight: 600, cursor: "default",
+          lineHeight: 1, fontFamily: "var(--font-inter)",
         }}
         aria-label={text}
-      >
-        ?
-      </span>
+      >?</span>
       <span className="tip-box" style={{
-        display: "none",
-        position: "absolute",
-        bottom: "calc(100% + 6px)",
-        left: "50%",
-        transform: "translateX(-50%)",
-        background: C.charcoal,
-        color: C.ivory,
-        fontSize: 12,
-        padding: "8px 10px",
-        borderRadius: 4,
-        width: 220,
-        lineHeight: 1.4,
-        zIndex: 10,
-        fontFamily: "var(--font-inter)",
-        pointerEvents: "none",
-        whiteSpace: "normal",
+        display: "none", position: "absolute",
+        bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)",
+        background: C.charcoal, color: C.ivory,
+        fontSize: 12, padding: "8px 10px", borderRadius: 4,
+        width: 220, lineHeight: 1.4, zIndex: 10,
+        fontFamily: "var(--font-inter)", pointerEvents: "none", whiteSpace: "normal",
       }}>
         {text}
       </span>
@@ -92,91 +88,47 @@ function Tip({ text }: { text: string }) {
 
 /* ─── Input field ───────────────────────────────────────────────────────────── */
 function Field({
-  label,
-  prefix,
-  suffix,
-  value,
-  onChange,
-  tip,
-  min = 0,
-  step = 1,
-  max,
+  label, prefix, suffix, value, onChange, tip,
+  min = 0, step = 1, max, bg,
 }: {
-  label: string;
-  prefix?: string;
-  suffix?: string;
-  value: number;
-  onChange: (v: number) => void;
-  tip?: string;
-  min?: number;
-  step?: number;
-  max?: number;
+  label: string; prefix?: string; suffix?: string;
+  value: number; onChange: (v: number) => void;
+  tip?: string; min?: number; step?: number; max?: number;
+  bg?: string;
 }) {
+  const inputBg = bg ?? C.tealTint;
   return (
     <div className="flex flex-col gap-1">
-      <label
-        className="text-sm font-medium flex items-center"
-        style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-      >
+      <label className="text-sm font-medium flex items-center" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
         {label}
         {tip && <Tip text={tip} />}
       </label>
       <div style={{ position: "relative" }}>
         {prefix && (
-          <span
-            style={{
-              position: "absolute",
-              left: 10,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: C.tealDark,
-              fontFamily: "var(--font-inter)",
-              fontSize: 14,
-              fontWeight: 500,
-              pointerEvents: "none",
-              zIndex: 1,
-            }}
-          >
-            {prefix}
-          </span>
+          <span style={{
+            position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
+            color: C.tealDark, fontFamily: "var(--font-inter)", fontSize: 14,
+            fontWeight: 500, pointerEvents: "none", zIndex: 1,
+          }}>{prefix}</span>
         )}
         <input
-          type="number"
-          value={value}
-          min={min}
-          max={max}
-          step={step}
+          type="number" value={value} min={min} max={max} step={step}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
           style={{
-            width: "100%",
-            background: C.tealTint,
-            border: `1px solid rgba(0,212,170,0.3)`,
-            borderRadius: 4,
+            width: "100%", background: inputBg,
+            border: "1px solid rgba(0,212,170,0.3)", borderRadius: 4,
             padding: prefix ? "8px 10px 8px 28px" : suffix ? "8px 36px 8px 10px" : "8px 10px",
-            fontSize: 14,
-            color: C.charcoal,
-            fontFamily: "var(--font-inter)",
-            outline: "none",
+            fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)", outline: "none",
           }}
           onFocus={(e) => (e.target.style.borderColor = C.teal)}
           onBlur={(e) => (e.target.style.borderColor = "rgba(0,212,170,0.3)")}
         />
         {suffix && (
-          <span
-            style={{
-              position: "absolute",
-              right: 10,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: C.tealDark,
-              fontFamily: "var(--font-inter)",
-              fontSize: 14,
-              fontWeight: 500,
-              pointerEvents: "none",
-            }}
-          >
-            {suffix}
-          </span>
+          <span style={{
+            position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+            color: C.tealDark, fontFamily: "var(--font-inter)", fontSize: 14,
+            fontWeight: 500, pointerEvents: "none",
+          }}>{suffix}</span>
         )}
       </div>
     </div>
@@ -188,11 +140,7 @@ function SectionHead({ title }: { title: string }) {
   return (
     <p
       className="text-xs font-semibold uppercase tracking-widest pt-2 pb-1"
-      style={{
-        color: C.teal,
-        fontFamily: "var(--font-inter)",
-        borderBottom: `1px solid ${C.tealTint}`,
-      }}
+      style={{ color: C.plum, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.tealTint}` }}
     >
       {title}
     </p>
@@ -200,42 +148,20 @@ function SectionHead({ title }: { title: string }) {
 }
 
 /* ─── Price badge ───────────────────────────────────────────────────────────── */
-function PriceBadge({
-  label,
-  price,
-  small,
-}: {
-  label: string;
-  price: number;
-  small?: boolean;
-}) {
+function PriceBadge({ label, price, small }: { label: string; price: number; small?: boolean }) {
   return (
     <div
       className="flex flex-col items-center justify-center rounded-lg p-3 gap-1"
       style={{ background: C.tealTint, minWidth: 0, overflow: "hidden" }}
     >
-      <span
-        style={{
-          fontSize: small ? "clamp(13px,1.8vw,18px)" : "clamp(14px,2.2vw,22px)",
-          fontWeight: 700,
-          color: C.plum,
-          fontFamily: "var(--font-outfit)",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          maxWidth: "100%",
-        }}
-      >
+      <span style={{
+        fontSize: small ? "clamp(13px,1.8vw,18px)" : "clamp(14px,2.2vw,22px)",
+        fontWeight: 700, color: C.plum, fontFamily: "var(--font-outfit)",
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%",
+      }}>
         ${fmt(price)}
       </span>
-      <span
-        style={{
-          fontSize: 11,
-          color: C.tealDark,
-          fontFamily: "var(--font-inter)",
-          whiteSpace: "nowrap",
-        }}
-      >
+      <span style={{ fontSize: 11, color: C.tealDark, fontFamily: "var(--font-inter)", whiteSpace: "nowrap" }}>
         {label}
       </span>
     </div>
@@ -243,46 +169,22 @@ function PriceBadge({
 }
 
 /* ─── Summary row ───────────────────────────────────────────────────────────── */
-function SummaryRow({
-  label,
-  value,
-  highlight,
-  indent,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-  indent?: boolean;
+function SummaryRow({ label, value, highlight, indent }: {
+  label: string; value: string; highlight?: boolean; indent?: boolean;
 }) {
   return (
     <div
       className="flex justify-between items-baseline py-1.5"
-      style={{
-        borderBottom: "1px solid rgba(45,27,78,0.07)",
-        paddingLeft: indent ? 12 : 0,
-      }}
+      style={{ borderBottom: "1px solid rgba(45,27,78,0.07)", paddingLeft: indent ? 12 : 0 }}
     >
-      <span
-        style={{
-          fontSize: highlight ? 14 : 13,
-          fontWeight: highlight ? 600 : 400,
-          color: highlight ? C.plum : C.charcoal,
-          fontFamily: "var(--font-inter)",
-        }}
-      >
-        {label}
-      </span>
-      <span
-        style={{
-          fontSize: highlight ? 14 : 13,
-          fontWeight: highlight ? 700 : 500,
-          color: highlight ? C.plum : C.charcoal,
-          fontFamily: "var(--font-inter)",
-          marginLeft: 12,
-        }}
-      >
-        {value}
-      </span>
+      <span style={{
+        fontSize: highlight ? 14 : 13, fontWeight: highlight ? 600 : 400,
+        color: highlight ? C.plum : C.charcoal, fontFamily: "var(--font-inter)",
+      }}>{label}</span>
+      <span style={{
+        fontSize: highlight ? 14 : 13, fontWeight: highlight ? 700 : 500,
+        color: highlight ? C.plum : C.charcoal, fontFamily: "var(--font-inter)", marginLeft: 12,
+      }}>{value}</span>
     </div>
   );
 }
@@ -301,19 +203,8 @@ function Disclaimer() {
         Important note about this calculator
       </button>
       {open && (
-        <div
-          style={{
-            marginTop: 10,
-            borderLeft: `3px solid ${C.violet}`,
-            paddingLeft: 14,
-            paddingTop: 10,
-            paddingBottom: 10,
-          }}
-        >
-          <p
-            className="text-sm leading-relaxed"
-            style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-          >
+        <div style={{ marginTop: 10, borderLeft: `3px solid ${C.violet}`, paddingLeft: 14, paddingTop: 10, paddingBottom: 10 }}>
+          <p className="text-sm leading-relaxed" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
             This calculator is a planning tool based on the information you enter.
             Results are estimates only and should not be treated as financial advice.
             Event Matters accepts no liability for decisions made based on calculator
@@ -333,7 +224,6 @@ export default function Calculator() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showGate, setShowGate] = useState(false);
-  const [showMethodology, setShowMethodology] = useState(false);
 
   const set = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -341,14 +231,14 @@ export default function Calculator() {
     []
   );
 
-  const calculate = useCallback(async () => {
+  const calculateWith = useCallback(async (formData: FormState) => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formData),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -361,7 +251,15 @@ export default function Calculator() {
     } finally {
       setLoading(false);
     }
-  }, [form]);
+  }, []);
+
+  const calculate = useCallback(() => calculateWith(form), [calculateWith, form]);
+
+  const reset = useCallback(() => {
+    setForm(EMPTY);
+    setResults(null);
+    setError(null);
+  }, []);
 
   const splitValid =
     Math.abs(form.earlyBirdPct + form.standardPct + form.fullPricePct - 100) < 0.01;
@@ -371,10 +269,7 @@ export default function Calculator() {
       <div className="mx-auto" style={{ maxWidth: 1100 }}>
 
         {/* Sample numbers banner */}
-        <div
-          className="flex items-start gap-3 rounded-md px-4 py-3 mb-8"
-          style={{ background: C.tealTint }}
-        >
+        <div className="flex items-start gap-3 rounded-md px-4 py-3 mb-8" style={{ background: C.tealTint }}>
           <span style={{ color: C.teal, fontSize: 16, lineHeight: 1.5 }}>ℹ</span>
           <p className="text-sm" style={{ color: C.tealDark, fontFamily: "var(--font-inter)" }}>
             The numbers below are examples only. Replace them with your own event
@@ -384,12 +279,7 @@ export default function Calculator() {
 
         {/* Two-column grid */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 32,
-            alignItems: "start",
-          }}
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, alignItems: "start" }}
           className="calc-grid"
         >
           {/* ─── LEFT: Inputs ─────────────────────────────────────────────── */}
@@ -411,12 +301,14 @@ export default function Calculator() {
 
             <Field label="Sponsorship commission rate" suffix="%"
               value={form.commissionRate} onChange={(v) => set("commissionRate", v)}
-              tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies." min={0} max={100} step={0.5} />
+              tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies."
+              min={0} max={100} step={0.5} />
 
             <SectionHead title="Registration" />
 
             <Field label="Total projected registrants" prefix="#"
-              value={form.totalRegistrations} onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
+              value={form.totalRegistrations}
+              onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
               tip="Expected number of paid conference registrants." min={1} />
 
             <Field label="Tier price increase rate" suffix="%"
@@ -424,10 +316,7 @@ export default function Calculator() {
               tip="The rate of increase between tier prices." min={0} max={100} step={1} />
 
             <div>
-              <label
-                className="text-sm font-medium block mb-2"
-                style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-              >
+              <label className="text-sm font-medium block mb-2" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
                 Registration purchase split
                 <Tip text="The rate at which you expect attendees to register per tier price across early bird, standard, and full price. Must add up to 100%." />
               </label>
@@ -443,15 +332,10 @@ export default function Calculator() {
                         value={form[key]}
                         onChange={(e) => set(key, parseFloat(e.target.value) || 0)}
                         style={{
-                          width: "100%",
-                          background: C.tealTint,
+                          width: "100%", background: C.tealTint,
                           border: `1px solid ${splitValid ? "rgba(0,212,170,0.3)" : "#ff4444"}`,
-                          borderRadius: 4,
-                          padding: "8px 28px 8px 10px",
-                          fontSize: 14,
-                          color: C.charcoal,
-                          fontFamily: "var(--font-inter)",
-                          outline: "none",
+                          borderRadius: 4, padding: "8px 28px 8px 10px",
+                          fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)", outline: "none",
                         }}
                       />
                       <span style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", color: C.tealDark, fontSize: 14, pointerEvents: "none" }}>%</span>
@@ -466,16 +350,21 @@ export default function Calculator() {
               )}
             </div>
 
-            {/* ─── Pre-con toggle ───────────────────────────────────────────── */}
+            {/* ─── Pre-conference toggle ─────────────────────────────────── */}
             <div
               className="rounded-lg p-4"
-              style={{ border: `1px solid rgba(0,212,170,0.25)`, background: form.preConEnabled ? C.tealTint : "#fafafa" }}
+              style={{ border: "1px solid rgba(0,212,170,0.25)", background: form.preConEnabled ? C.tealTint : "#fafafa" }}
             >
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.preConEnabled}
-                  onChange={(e) => set("preConEnabled", e.target.checked)}
+                  onChange={(e) => {
+                    const newEnabled = e.target.checked;
+                    const newForm = { ...form, preConEnabled: newEnabled };
+                    setForm(newForm);
+                    if (results) calculateWith(newForm);
+                  }}
                   style={{ accentColor: C.teal, width: 16, height: 16 }}
                 />
                 <span className="text-sm font-semibold" style={{ color: C.plum, fontFamily: "var(--font-inter)" }}>
@@ -487,15 +376,18 @@ export default function Calculator() {
                 <div className="flex flex-col gap-4 mt-4">
                   <Field label="Pre-conference net profit target" prefix="$"
                     value={form.preConNetProfit} onChange={(v) => set("preConNetProfit", v)}
-                    tip="The profit you want the pre-conference workshop to generate, above its own costs." />
+                    tip="The profit you want the pre-conference workshop to generate, above its own costs."
+                    bg={C.ivory} />
 
                   <Field label="Honorarium per pre-conference attendee" prefix="$"
                     value={form.honorariumPerAttendee} onChange={(v) => set("honorariumPerAttendee", v)}
-                    tip="Speaker or facilitator honorarium cost per pre-conference attendee. This is the main variable cost for the workshop." />
+                    tip="Speaker or facilitator honorarium cost per pre-conference attendee. This is the main variable cost for the workshop."
+                    bg={C.ivory} />
 
                   <Field label="Pre-conference attendance" suffix="%"
                     value={form.preConAttendancePct} onChange={(v) => set("preConAttendancePct", v)}
-                    tip="Percentage of main conference registrants expected to attend a pre-conference workshop." min={1} max={100} />
+                    tip="Percentage of main conference registrants expected to attend a pre-conference workshop."
+                    min={1} max={100} bg={C.ivory} />
                 </div>
               )}
             </div>
@@ -506,8 +398,8 @@ export default function Calculator() {
               disabled={loading || !splitValid}
               className="w-full rounded-sm py-3 text-base font-semibold transition-opacity"
               style={{
-                background: "#00D4AA",
-                color: "#2D1B4E",
+                background: C.plum,
+                color: C.ivory,
                 fontFamily: "var(--font-inter)",
                 cursor: loading || !splitValid ? "not-allowed" : "pointer",
                 opacity: loading || !splitValid ? 0.6 : 1,
@@ -518,9 +410,7 @@ export default function Calculator() {
             </button>
 
             {error && (
-              <p className="text-sm" style={{ color: "#cc0000", fontFamily: "var(--font-inter)" }}>
-                {error}
-              </p>
+              <p className="text-sm" style={{ color: "#cc0000", fontFamily: "var(--font-inter)" }}>{error}</p>
             )}
           </div>
 
@@ -538,15 +428,10 @@ export default function Calculator() {
               </div>
             ) : (
               <div className="flex flex-col gap-6">
-                {/* Main con prices */}
-                <div
-                  className="rounded-lg p-5"
-                  style={{ border: `1px solid rgba(45,27,78,0.12)`, background: C.ivory }}
-                >
-                  <p
-                    className="text-xs font-semibold uppercase tracking-widest mb-4"
-                    style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
-                  >
+                {/* Main conference prices */}
+                <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: C.ivory }}>
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-4"
+                    style={{ color: C.plum, fontFamily: "var(--font-inter)" }}>
                     Main conference prices
                   </p>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -556,16 +441,11 @@ export default function Calculator() {
                   </div>
                 </div>
 
-                {/* Pre-con prices */}
+                {/* Pre-conference prices */}
                 {results.preCon && (
-                  <div
-                    className="rounded-lg p-5"
-                    style={{ border: `1px solid rgba(45,27,78,0.12)`, background: C.ivory }}
-                  >
-                    <p
-                      className="text-xs font-semibold uppercase tracking-widest mb-4"
-                      style={{ color: C.violet, fontFamily: "var(--font-inter)" }}
-                    >
+                  <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: C.ivory }}>
+                    <p className="text-xs font-semibold uppercase tracking-widest mb-4"
+                      style={{ color: C.violet, fontFamily: "var(--font-inter)" }}>
                       Pre-conference workshop prices
                     </p>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -576,15 +456,25 @@ export default function Calculator() {
                   </div>
                 )}
 
-                {/* Summary */}
-                <div
-                  className="rounded-lg p-5"
-                  style={{ border: `1px solid rgba(45,27,78,0.12)`, background: "#ffffff" }}
+                {/* Reset button */}
+                <button
+                  onClick={reset}
+                  className="w-full rounded-sm py-2 text-sm font-medium"
+                  style={{
+                    background: "transparent",
+                    border: `1px solid rgba(45,27,78,0.2)`,
+                    color: C.charcoal,
+                    fontFamily: "var(--font-inter)",
+                    cursor: "pointer",
+                  }}
                 >
-                  <p
-                    className="text-xs font-semibold uppercase tracking-widest mb-3"
-                    style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-                  >
+                  Reset calculator
+                </button>
+
+                {/* Revenue Summary */}
+                <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: "#ffffff" }}>
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3"
+                    style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
                     Revenue summary
                   </p>
                   <SummaryRow label="Net sponsorship income" value={`$${fmt(results.summary.netSponsorshipIncome)}`} />
@@ -601,31 +491,11 @@ export default function Calculator() {
                   />
                 </div>
 
-                {/* "How we calculated this" + Download */}
+                {/* Download */}
                 <div className="flex flex-col gap-3">
                   <button
-                    className="w-full rounded-sm py-2.5 text-sm font-medium"
-                    style={{
-                      background: "#E8FAF6",
-                      border: "1px solid rgba(0,212,170,0.35)",
-                      color: "#2D1B4E",
-                      fontFamily: "var(--font-inter)",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setShowMethodology(true)}
-                  >
-                    How we calculated this
-                  </button>
-
-                  <button
                     className="w-full rounded-sm py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-                    style={{
-                      background: "#2D1B4E",
-                      color: "#FAF9F7",
-                      fontFamily: "var(--font-inter)",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
+                    style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)", border: "none", cursor: "pointer" }}
                     onClick={() => setShowGate(true)}
                   >
                     Download summary →
@@ -639,15 +509,9 @@ export default function Calculator() {
         </div>
 
         {/* Marcella line */}
-        <p
-          className="text-center text-sm mt-12"
-          style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-        >
+        <p className="text-center text-sm mt-12" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
           Built by{" "}
-          <a
-            href="/about"
-            style={{ color: C.violet, borderBottom: `1px solid ${C.violet}`, paddingBottom: 1 }}
-          >
+          <a href="/about" style={{ color: C.violet, borderBottom: `1px solid ${C.violet}`, paddingBottom: 1 }}>
             Marcella McKeown
           </a>
         </p>
@@ -656,11 +520,6 @@ export default function Calculator() {
       {/* Email gate modal */}
       {showGate && results && (
         <EmailGate onClose={() => setShowGate(false)} results={results} form={form} />
-      )}
-
-      {/* Methodology modal */}
-      {showMethodology && results && (
-        <MethodologyModal onClose={() => setShowMethodology(false)} form={form} results={results} />
       )}
 
       {/* Tooltip CSS */}
@@ -676,9 +535,7 @@ export default function Calculator() {
 
 /* ─── Email gate modal ──────────────────────────────────────────────────────── */
 function EmailGate({
-  onClose,
-  results,
-  form,
+  onClose, results, form,
 }: {
   onClose: () => void;
   results: CalculateResponse;
@@ -756,44 +613,23 @@ function EmailGate({
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div
-        style={{
-          background: "#ffffff",
-          borderRadius: 8,
-          padding: 32,
-          maxWidth: 440,
-          width: "100%",
-          position: "relative",
-        }}
-      >
+      <div style={{ background: "#ffffff", borderRadius: 8, padding: 32, maxWidth: 440, width: "100%", position: "relative" }}>
         <button
           onClick={onClose}
-          style={{
-            position: "absolute", top: 16, right: 16,
-            background: "none", border: "none", cursor: "pointer",
-            color: C.charcoal, fontSize: 20, lineHeight: 1,
-          }}
+          style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: C.charcoal, fontSize: 20, lineHeight: 1 }}
           aria-label="Close"
-        >
-          ×
-        </button>
+        >×</button>
 
         {done ? (
-          /* ─── Success: download buttons ──────────────────────────────── */
           <div className="flex flex-col gap-5">
             <div>
-              <p
-                className="text-xl font-bold mb-1"
-                style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
-              >
+              <p className="text-xl font-bold mb-1" style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}>
                 You&apos;re all set ✓
               </p>
               <p className="text-sm" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
-                Download your results in any format. A confirmation has been sent to{" "}
-                <strong>{email}</strong>.
+                Download your results below. A confirmation has been sent to <strong>{email}</strong>.
               </p>
             </div>
-
             <div className="flex flex-col gap-3">
               <DownloadButton
                 label="Download PDF"
@@ -801,52 +637,27 @@ function EmailGate({
                 icon="📄"
                 loading={downloading === "pdf"}
                 onClick={handlePDF}
-                bg="#2D1B4E"
-                color="#FAF9F7"
+                bg={C.plum}
+                color={C.ivory}
               />
               <DownloadButton
                 label="Download Excel"
-                sublabel="3 sheets: summary, pre-con, methodology"
+                sublabel="2 sheets: summary + pre-conference"
                 icon="📊"
                 loading={downloading === "excel"}
                 onClick={handleExcel}
-                bg="#00D4AA"
-                color="#2D1B4E"
-              />
-              <DownloadButton
-                label="Open in Google Sheets"
-                sublabel="Download Excel — then upload to Google Drive"
-                icon="🔗"
-                loading={downloading === "sheets"}
-                onClick={handleExcel}
-                bg="#E8FAF6"
-                color="#005C47"
-                border="1px solid rgba(0,212,170,0.4)"
+                bg={C.teal}
+                color={C.plum}
               />
             </div>
-
-            <p
-              className="text-xs text-center"
-              style={{ color: "rgba(44,44,42,0.45)", fontFamily: "var(--font-inter)" }}
-            >
-              Google Sheets: after downloading the Excel file, upload it to Google Drive → right-click → Open with Google Sheets.
-            </p>
           </div>
         ) : (
-          /* ─── Gate form ──────────────────────────────────────────────── */
           <>
-            <p
-              className="text-xl font-bold mb-1"
-              style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
-            >
+            <p className="text-xl font-bold mb-1" style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}>
               Download your summary
             </p>
-            <p
-              className="text-sm mb-6"
-              style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}
-            >
-              Enter your email to get PDF, Excel, and Google Sheets versions of
-              your results — free.
+            <p className="text-sm mb-6" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
+              Enter your email to get PDF and Excel versions of your results — free.
             </p>
 
             <div className="flex gap-2 mb-5">
@@ -871,41 +682,31 @@ function EmailGate({
             <form onSubmit={submit} className="flex flex-col gap-3">
               {mode === "subscribe" && (
                 <input
-                  type="text"
-                  placeholder="First name"
-                  value={firstName}
+                  type="text" placeholder="First name" value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   style={{
                     width: "100%", padding: "9px 12px",
                     border: "1px solid rgba(45,27,78,0.2)", borderRadius: 4,
-                    fontSize: 14, color: C.charcoal,
-                    fontFamily: "var(--font-inter)", outline: "none",
-                    background: C.tealTint,
+                    fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)",
+                    outline: "none", background: C.tealTint,
                   }}
                 />
               )}
               <input
-                type="email"
-                placeholder="Email address"
-                required
-                value={email}
+                type="email" placeholder="Email address" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 style={{
                   width: "100%", padding: "9px 12px",
                   border: "1px solid rgba(45,27,78,0.2)", borderRadius: 4,
-                  fontSize: 14, color: C.charcoal,
-                  fontFamily: "var(--font-inter)", outline: "none",
-                  background: C.tealTint,
+                  fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)",
+                  outline: "none", background: C.tealTint,
                 }}
               />
-              {error && (
-                <p className="text-xs" style={{ color: "#cc0000" }}>{error}</p>
-              )}
+              {error && <p className="text-xs" style={{ color: "#cc0000" }}>{error}</p>}
               <button
-                type="submit"
-                disabled={submitting}
+                type="submit" disabled={submitting}
                 style={{
-                  background: "#2D1B4E", color: "#FAF9F7",
+                  background: C.plum, color: C.ivory,
                   border: "none", borderRadius: 4,
                   padding: "10px 0", fontSize: 14, fontWeight: 600,
                   fontFamily: "var(--font-inter)",
@@ -932,131 +733,13 @@ function EmailGate({
   );
 }
 
-/* ─── Methodology modal ─────────────────────────────────────────────────────── */
-function MethodologyModal({
-  onClose,
-  form,
-  results,
-}: {
-  onClose: () => void;
-  form: FormState;
-  results: CalculateResponse;
-}) {
-  const r = 1 + form.priceIncreaseRate / 100;
-  const ebFrac = form.earlyBirdPct / 100;
-  const stdFrac = form.standardPct / 100;
-  const fpFrac = form.fullPricePct / 100;
-  const wf = ebFrac + stdFrac * r + fpFrac * r * r;
-  const netSponsorship = form.sponsorship * (1 - form.commissionRate / 100);
-  const totalNeeded = form.expenses + form.netProfit - netSponsorship;
-
-  function Row({ label, value }: { label: string; value: string }) {
-    return (
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0", borderBottom: "1px solid rgba(45,27,78,0.07)" }}>
-        <span style={{ fontSize: 13, color: C.charcoal, fontFamily: "var(--font-inter)" }}>{label}</span>
-        <span style={{ fontSize: 13, fontWeight: 600, color: C.plum, fontFamily: "var(--font-inter)", marginLeft: 16 }}>{value}</span>
-      </div>
-    );
-  }
-
-  function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
-    return (
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: "50%", background: C.plum, color: C.ivory, fontSize: 12, fontWeight: 700, fontFamily: "var(--font-inter)", flexShrink: 0 }}>{n}</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: C.plum, fontFamily: "var(--font-inter)" }}>{title}</span>
-        </div>
-        <div style={{ paddingLeft: 34 }}>{children}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(45,27,78,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div style={{ background: "#ffffff", borderRadius: 8, padding: 32, maxWidth: 520, width: "100%", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
-        <button
-          onClick={onClose}
-          style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: C.charcoal, fontSize: 20, lineHeight: 1 }}
-          aria-label="Close"
-        >×</button>
-
-        <p className="text-xl font-bold mb-1" style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}>
-          How we calculated this
-        </p>
-        <p className="text-sm mb-6" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
-          Step-by-step breakdown based on your inputs.
-        </p>
-
-        <Step n={1} title="Net sponsorship income">
-          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-            Gross sponsorship minus the platform/agency commission.
-          </p>
-          <Row label={`$${fmt(form.sponsorship)} × (1 − ${form.commissionRate}%)`} value={`$${fmt(netSponsorship)}`} />
-        </Step>
-
-        <Step n={2} title="Revenue needed from ticket sales">
-          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-            Expenses plus target profit, less the net sponsorship income.
-          </p>
-          <Row label={`$${fmt(form.expenses)} + $${fmt(form.netProfit)} − $${fmt(netSponsorship)}`} value={`$${fmt(totalNeeded)}`} />
-        </Step>
-
-        <Step n={3} title="Weighted revenue factor">
-          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-            Because attendees buy at different prices, we calculate how many &ldquo;early bird equivalents&rdquo; each registrant represents on average. r&nbsp;=&nbsp;1&nbsp;+&nbsp;tier&nbsp;increase&nbsp;rate.
-          </p>
-          <Row
-            label={`${form.earlyBirdPct}% + ${form.standardPct}% × ${r.toFixed(2)} + ${form.fullPricePct}% × ${r.toFixed(2)}²`}
-            value={wf.toFixed(4)}
-          />
-        </Step>
-
-        <Step n={4} title="Early Bird price (main conference)">
-          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-            Revenue needed divided by registrations × weighted factor, rounded to the nearest $5.
-          </p>
-          <Row label={`$${fmt(totalNeeded)} ÷ (${fmt(form.totalRegistrations)} × ${wf.toFixed(4)})`} value={`$${fmt(results.mainCon.earlyBird)}`} />
-        </Step>
-
-        <Step n={5} title="Standard &amp; Full Price tiers">
-          <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-            Each tier multiplies the previous by (1 + tier increase rate), rounded to the nearest $5.
-          </p>
-          <Row label={`Early Bird $${fmt(results.mainCon.earlyBird)} × ${r.toFixed(2)}`} value={`$${fmt(results.mainCon.standard)}`} />
-          <Row label={`Standard $${fmt(results.mainCon.standard)} × ${r.toFixed(2)}`} value={`$${fmt(results.mainCon.fullPrice)}`} />
-        </Step>
-
-        {results.preCon && (
-          <Step n={6} title="Pre-conference workshop">
-            <p style={{ fontSize: 12, color: C.charcoal, fontFamily: "var(--font-inter)", marginBottom: 6 }}>
-              Calculated independently using the same weighted factor, but against the pre-con target (its own profit + honorarium costs).
-            </p>
-            <Row label="Pre-con Early Bird" value={`$${fmt(results.preCon.earlyBird)}`} />
-            <Row label="Pre-con Standard" value={`$${fmt(results.preCon.standard)}`} />
-            <Row label="Pre-con Full Price" value={`$${fmt(results.preCon.fullPrice)}`} />
-          </Step>
-        )}
-
-        <div style={{ marginTop: 8, paddingTop: 16, borderTop: "1px solid rgba(45,27,78,0.1)" }}>
-          <p style={{ fontSize: 11, color: "rgba(44,44,42,0.5)", fontFamily: "var(--font-inter)", lineHeight: 1.5 }}>
-            All prices are rounded to the nearest $5. Results are estimates — verify with your accountant before setting ticket prices.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Download button ───────────────────────────────────────────────────────── */
 function DownloadButton({
-  label, sublabel, icon, loading, onClick, bg, color, border: borderStyle,
+  label, sublabel, icon, loading, onClick, bg, color,
 }: {
   label: string; sublabel: string; icon: string;
   loading: boolean; onClick: () => void;
-  bg: string; color: string; border?: string;
+  bg: string; color: string;
 }) {
   return (
     <button
@@ -1064,7 +747,7 @@ function DownloadButton({
       disabled={loading}
       style={{
         display: "flex", alignItems: "center", gap: 12,
-        background: bg, color, border: borderStyle ?? "none",
+        background: bg, color, border: "none",
         borderRadius: 6, padding: "12px 16px",
         cursor: loading ? "wait" : "pointer",
         opacity: loading ? 0.7 : 1,
