@@ -396,8 +396,8 @@ export default function Calculator() {
               disabled={loading || !splitValid}
               className="w-full rounded-sm py-3 text-base font-semibold transition-opacity"
               style={{
-                background: C.plum,
-                color: C.ivory,
+                backgroundColor: "#2D1B4E",
+                color: "#FAF9F7",
                 fontFamily: "var(--font-inter)",
                 cursor: loading || !splitValid ? "not-allowed" : "pointer",
                 opacity: loading || !splitValid ? 0.6 : 1,

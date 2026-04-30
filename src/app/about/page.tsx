@@ -147,7 +147,7 @@ function Body() {
                 width={600}
                 height={750}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center 30%" }}
+                style={{ objectPosition: "center 10%" }}
                 priority
               />
             </div>

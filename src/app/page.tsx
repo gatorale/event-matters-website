@@ -94,17 +94,18 @@ function StatsStrip() {
       style={{ background: C.plumDeep }}
       className="px-6 py-10 lg:px-10"
     >
-      <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+      <div className="mx-auto max-w-7xl overflow-x-auto">
+        <div className="grid gap-8 min-w-max" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
         {/* Name credit — first cell, no big number */}
         <div className="flex flex-col gap-1">
           <span
-            className="text-4xl font-bold"
+            className="text-2xl font-bold whitespace-nowrap"
             style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
           >
             Marcella McKeown
           </span>
           <span
-            className="text-sm leading-snug"
+            className="text-sm leading-snug whitespace-nowrap"
             style={{ color: "rgba(250,249,247,0.65)", fontFamily: "var(--font-inter)" }}
           >
             Event Matters, Founder
@@ -115,19 +116,20 @@ function StatsStrip() {
         {NUMBER_STATS.map((s) => (
           <div key={s.label} className="flex flex-col gap-1">
             <span
-              className="text-4xl font-bold"
+              className="text-4xl font-bold whitespace-nowrap"
               style={{ color: C.teal, fontFamily: "var(--font-outfit)" }}
             >
               {s.value}
             </span>
             <span
-              className="text-sm leading-snug"
+              className="text-sm leading-snug whitespace-nowrap"
               style={{ color: "rgba(250,249,247,0.65)", fontFamily: "var(--font-inter)" }}
             >
               {s.label}
             </span>
           </div>
         ))}
+        </div>
       </div>
     </section>
   );
@@ -157,7 +159,7 @@ function WhatWeDo() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             eyebrow="Writing & thinking"
-            title="WEEKLY POSTS"
+            title="Weekly Posts"
             body="Practical articles, frameworks, and perspectives on event strategy, speaker programmes, audience engagement, and the year-round work that makes events worth attending."
             cta="Read the blog →"
             href="https://blog.eventmatters.co"
