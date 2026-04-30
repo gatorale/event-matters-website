@@ -137,19 +137,21 @@ function Body() {
           {/* Right — sidebar */}
           <div className="flex flex-col gap-6">
             {/* Headshot */}
-            <div
-              className="w-full overflow-hidden rounded-lg"
-              style={{ aspectRatio: "2/3" }}
-            >
-              <Image
-                src="/headshot.png"
-                alt="Marcella McKeown"
-                width={600}
-                height={750}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: "center 10%" }}
-                priority
-              />
+            <div className="flex justify-center">
+              <div
+                className="overflow-hidden rounded-lg"
+                style={{ width: "100%", maxWidth: 280, height: 340, flexShrink: 0 }}
+              >
+                <Image
+                  src="/headshot.png"
+                  alt="Marcella McKeown"
+                  width={600}
+                  height={750}
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: "center 15%" }}
+                  priority
+                />
+              </div>
             </div>
 
             {/* Connect card */}

@@ -256,7 +256,11 @@ export default function Calculator() {
   const calculate = useCallback(() => calculateWith(form), [calculateWith, form]);
 
   useEffect(() => {
-    if (!results || !splitValid) return;
+    if (!results) return;
+    if (!splitValid) return;
+    if (form.totalRegistrations <= 0) return;
+    if (form.expenses <= 0) return;
+    if (form.priceIncreaseRate <= 0) return;
     calculateWith(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);

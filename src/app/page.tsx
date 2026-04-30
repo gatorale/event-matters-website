@@ -90,21 +90,20 @@ const NUMBER_STATS = [
 function StatsStrip() {
   return (
     <section
-      style={{ background: C.plumDeep }}
+      style={{ background: C.plumDeep, overflow: "hidden" }}
       className="px-6 py-10 lg:px-10"
     >
-      <div className="mx-auto max-w-7xl overflow-x-auto">
-        <div className="grid gap-8 min-w-max" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}>
+      <div className="mx-auto max-w-7xl grid grid-cols-3 md:grid-cols-6 gap-6">
         {/* Name credit — first cell, no big number */}
         <div className="flex flex-col gap-1">
           <span
-            className="text-2xl font-bold whitespace-nowrap"
+            className="text-lg font-bold leading-snug"
             style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
           >
             Marcella McKeown
           </span>
           <span
-            className="text-sm leading-snug whitespace-nowrap"
+            className="text-xs leading-snug"
             style={{ color: "rgba(250,249,247,0.65)", fontFamily: "var(--font-inter)" }}
           >
             Event Matters, Founder
@@ -115,20 +114,19 @@ function StatsStrip() {
         {NUMBER_STATS.map((s) => (
           <div key={s.label} className="flex flex-col gap-1">
             <span
-              className="text-4xl font-bold whitespace-nowrap"
+              className="text-3xl font-bold"
               style={{ color: C.teal, fontFamily: "var(--font-outfit)" }}
             >
               {s.value}
             </span>
             <span
-              className="text-sm leading-snug whitespace-nowrap"
+              className="text-xs leading-snug"
               style={{ color: "rgba(250,249,247,0.65)", fontFamily: "var(--font-inter)" }}
             >
               {s.label}
             </span>
           </div>
         ))}
-        </div>
       </div>
     </section>
   );
