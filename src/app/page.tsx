@@ -81,10 +81,9 @@ function Hero() {
 /* ─── 2. Stats strip ──────────────────────────────────────────────────────── */
 const NUMBER_STATS = [
   { value: "18+", label: "years of community & events" },
-  { value: "26",  label: "in-person conferences" },
+  { value: "26",  label: "large-scale tech conferences" },
   { value: "214", label: "full-day workshops" },
   { value: "122", label: "virtual & hybrid events" },
-  { value: "35",  label: "training courses" },
   { value: "288", label: "newsletter editions" },
 ];
 
@@ -95,7 +94,7 @@ function StatsStrip() {
       className="px-6 py-10 lg:px-10"
     >
       <div className="mx-auto max-w-7xl overflow-x-auto">
-        <div className="grid gap-8 min-w-max" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
+        <div className="grid gap-8 min-w-max" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}>
         {/* Name credit — first cell, no big number */}
         <div className="flex flex-col gap-1">
           <span
@@ -387,7 +386,7 @@ function Newsletter() {
           className="text-3xl font-bold mb-4"
           style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
         >
-          Practical thinking for event professionals.
+          Practical thinking on event matters.
         </h2>
         <p
           className="text-base leading-relaxed mb-8"

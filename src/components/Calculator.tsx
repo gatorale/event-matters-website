@@ -117,7 +117,7 @@ function Field({
           style={{
             width: "100%", background: inputBg,
             border: "1px solid rgba(0,212,170,0.3)", borderRadius: 4,
-            padding: prefix ? "8px 10px 8px 28px" : suffix ? "8px 36px 8px 10px" : "8px 10px",
+            padding: prefix ? "6px 10px 6px 28px" : suffix ? "6px 36px 6px 10px" : "6px 10px",
             fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)", outline: "none",
           }}
           onFocus={(e) => (e.target.style.borderColor = C.teal)}
@@ -280,37 +280,41 @@ export default function Calculator() {
           className="calc-grid"
         >
           {/* ─── LEFT: Inputs ─────────────────────────────────────────────── */}
-          <div style={{ minWidth: 0 }} className="flex flex-col gap-5">
+          <div style={{ minWidth: 0 }} className="flex flex-col gap-3">
 
             <SectionHead title="Conference financials" />
 
-            <Field label="Target net profit" prefix="$"
-              value={form.netProfit} onChange={(v) => set("netProfit", v)}
-              tip="The amount of expected profit after all expenses are paid." />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <Field label="Target net profit" prefix="$"
+                value={form.netProfit} onChange={(v) => set("netProfit", v)}
+                tip="The amount of expected profit after all expenses are paid." />
 
-            <Field label="Total operating expenses" prefix="$"
-              value={form.expenses} onChange={(v) => set("expenses", v)}
-              tip="Total event costs, including venue, AV, catering, speakers, F&B, etc. Pre-conference honorarium excluded if using the pre-conference add-on." />
+              <Field label="Total operating expenses" prefix="$"
+                value={form.expenses} onChange={(v) => set("expenses", v)}
+                tip="Total event costs, including venue, AV, catering, speakers, F&B, etc. Pre-conference honorarium excluded if using the pre-conference add-on." />
 
-            <Field label="Gross sponsorship revenue" prefix="$"
-              value={form.sponsorship} onChange={(v) => set("sponsorship", v)}
-              tip="Total sponsorship revenue before deducting sponsorship commission rate." />
+              <Field label="Gross sponsorship revenue" prefix="$"
+                value={form.sponsorship} onChange={(v) => set("sponsorship", v)}
+                tip="Total sponsorship revenue before deducting sponsorship commission rate." />
 
-            <Field label="Sponsorship commission rate" suffix="%"
-              value={form.commissionRate} onChange={(v) => set("commissionRate", v)}
-              tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies."
-              min={0} max={100} step={0.5} />
+              <Field label="Sponsorship commission rate" suffix="%"
+                value={form.commissionRate} onChange={(v) => set("commissionRate", v)}
+                tip="Commission rate to be deducted from gross sponsorship revenue. Enter 0 if none applies."
+                min={0} max={100} step={0.5} />
+            </div>
 
             <SectionHead title="Registration" />
 
-            <Field label="Total projected registrants" prefix="#"
-              value={form.totalRegistrations}
-              onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
-              tip="Expected number of paid conference registrants." min={1} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <Field label="Total projected registrants" prefix="#"
+                value={form.totalRegistrations}
+                onChange={(v) => set("totalRegistrations", Math.max(1, Math.round(v)))}
+                tip="Expected number of paid conference registrants." min={1} />
 
-            <Field label="Tier price increase rate" suffix="%"
-              value={form.priceIncreaseRate} onChange={(v) => set("priceIncreaseRate", v)}
-              tip="The rate of increase between tier prices." min={0} max={100} step={1} />
+              <Field label="Tier price increase rate" suffix="%"
+                value={form.priceIncreaseRate} onChange={(v) => set("priceIncreaseRate", v)}
+                tip="The rate of increase between tier prices." min={0} max={100} step={1} />
+            </div>
 
             <div>
               <label className="text-sm font-medium block mb-2" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
@@ -332,7 +336,7 @@ export default function Calculator() {
                         style={{
                           width: "100%", background: C.tealTint,
                           border: `1px solid ${splitValid ? "rgba(0,212,170,0.3)" : "#ff4444"}`,
-                          borderRadius: 4, padding: "8px 28px 8px 10px",
+                          borderRadius: 4, padding: "6px 28px 6px 10px",
                           fontSize: 14, color: C.charcoal, fontFamily: "var(--font-inter)", outline: "none",
                         }}
                       />
