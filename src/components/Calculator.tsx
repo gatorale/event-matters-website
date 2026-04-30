@@ -16,6 +16,14 @@ const C = {
   charcoal: "#2C2C2A",
 };
 
+const CURRENCIES = [
+  { label: "USD", symbol: "$" },
+  { label: "CAD", symbol: "CA$" },
+  { label: "GBP", symbol: "£" },
+  { label: "EUR", symbol: "€" },
+  { label: "AUD", symbol: "A$" },
+];
+
 /* ─── form states ───────────────────────────────────────────────────────────── */
 const DEFAULTS: CalcForm = {
   netProfit: 50000,
@@ -148,7 +156,7 @@ function SectionHead({ title }: { title: string }) {
 }
 
 /* ─── Price badge ───────────────────────────────────────────────────────────── */
-function PriceBadge({ label, price, small }: { label: string; price: number; small?: boolean }) {
+function PriceBadge({ label, price, small, currencySymbol = "$" }: { label: string; price: number; small?: boolean; currencySymbol?: string }) {
   return (
     <div
       className="flex flex-col items-center justify-center rounded-lg p-3 gap-1"
@@ -159,7 +167,7 @@ function PriceBadge({ label, price, small }: { label: string; price: number; sma
         fontWeight: 700, color: C.plum, fontFamily: "var(--font-outfit)",
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%",
       }}>
-        ${fmt(price)}
+        {currencySymbol}{fmt(price)}
       </span>
       <span style={{ fontSize: 11, color: C.tealDark, fontFamily: "var(--font-inter)", whiteSpace: "nowrap" }}>
         {label}
@@ -225,6 +233,8 @@ export default function Calculator() {
   const [error, setError] = useState<string | null>(null);
   const [showGate, setShowGate] = useState(false);
   const [splitTouched, setSplitTouched] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState("$");
+  const [copied, setCopied] = useState(false);
 
   const set = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -271,6 +281,18 @@ export default function Calculator() {
     setSplitTouched(false);
   }, []);
 
+  const handleCopy = useCallback(async () => {
+    if (!results) return;
+    const c = currencySymbol;
+    let text = `Main Conference: Early Bird ${c}${fmt(results.mainCon.earlyBird)} | Standard ${c}${fmt(results.mainCon.standard)} | Full Price ${c}${fmt(results.mainCon.fullPrice)}`;
+    if (results.preCon) {
+      text += `\nPre-Conference: Early Bird ${c}${fmt(results.preCon.earlyBird)} | Standard ${c}${fmt(results.preCon.standard)} | Full Price ${c}${fmt(results.preCon.fullPrice)}`;
+    }
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [results, currencySymbol]);
+
   const splitValid =
     Math.abs(form.earlyBirdPct + form.standardPct + form.fullPricePct - 100) < 0.01;
 
@@ -286,20 +308,45 @@ export default function Calculator() {
           {/* ─── LEFT: Inputs ─────────────────────────────────────────────── */}
           <div style={{ minWidth: 0 }} className="flex flex-col gap-3">
 
+            {/* Currency selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>Currency:</span>
+              <div className="flex gap-1 flex-wrap">
+                {CURRENCIES.map(({ label, symbol }) => (
+                  <button
+                    key={label}
+                    onClick={() => setCurrencySymbol(symbol)}
+                    style={{
+                      padding: "3px 8px", fontSize: 12,
+                      border: `1px solid ${currencySymbol === symbol ? C.teal : "rgba(0,212,170,0.3)"}`,
+                      borderRadius: 4,
+                      background: currencySymbol === symbol ? C.tealTint : "transparent",
+                      color: currencySymbol === symbol ? C.tealDark : C.charcoal,
+                      fontFamily: "var(--font-inter)",
+                      fontWeight: currencySymbol === symbol ? 600 : 400,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <SectionHead title="Conference financials" />
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <Field label="Target net profit" prefix="$"
+              <Field label="Target net profit" prefix={currencySymbol}
                 value={form.netProfit}
                 onChange={(v) => { const n = { ...form, netProfit: v }; setForm(n); maybeRecalc(n); }}
                 tip="The amount of expected profit after all expenses are paid." />
 
-              <Field label="Total operating expenses" prefix="$"
+              <Field label="Total operating expenses" prefix={currencySymbol}
                 value={form.expenses}
                 onChange={(v) => { const n = { ...form, expenses: v }; setForm(n); maybeRecalc(n); }}
                 tip="Total event costs, including venue, AV, catering, speakers, F&B, etc. Pre-conference honorarium excluded if using the pre-conference add-on." />
 
-              <Field label="Gross sponsorship revenue" prefix="$"
+              <Field label="Gross sponsorship revenue" prefix={currencySymbol}
                 value={form.sponsorship}
                 onChange={(v) => { const n = { ...form, sponsorship: v }; setForm(n); maybeRecalc(n); }}
                 tip="Total sponsorship revenue before deducting sponsorship commission rate." />
@@ -384,13 +431,13 @@ export default function Calculator() {
 
               {form.preConEnabled && (
                 <div className="flex flex-col gap-4 mt-4">
-                  <Field label="Pre-conference net profit target" prefix="$"
+                  <Field label="Pre-conference net profit target" prefix={currencySymbol}
                     value={form.preConNetProfit}
                     onChange={(v) => { const n = { ...form, preConNetProfit: v }; setForm(n); maybeRecalc(n); }}
                     tip="The profit you want the pre-conference workshop to generate, above its own costs."
                     bg={C.ivory} />
 
-                  <Field label="Honorarium per pre-conference attendee" prefix="$"
+                  <Field label="Honorarium per pre-conference attendee" prefix={currencySymbol}
                     value={form.honorariumPerAttendee}
                     onChange={(v) => { const n = { ...form, honorariumPerAttendee: v }; setForm(n); maybeRecalc(n); }}
                     tip="Speaker or facilitator honorarium cost per pre-conference attendee. This is the main variable cost for the workshop."
@@ -449,9 +496,9 @@ export default function Calculator() {
                     Main conference prices
                   </p>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                    <PriceBadge label="Early Bird" price={results.mainCon.earlyBird} />
-                    <PriceBadge label="Standard" price={results.mainCon.standard} />
-                    <PriceBadge label="Full Price" price={results.mainCon.fullPrice} />
+                    <PriceBadge label="Early Bird" price={results.mainCon.earlyBird} currencySymbol={currencySymbol} />
+                    <PriceBadge label="Standard" price={results.mainCon.standard} currencySymbol={currencySymbol} />
+                    <PriceBadge label="Full Price" price={results.mainCon.fullPrice} currencySymbol={currencySymbol} />
                   </div>
                 </div>
 
@@ -463,13 +510,31 @@ export default function Calculator() {
                       Pre-conference workshop prices
                     </p>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                      <PriceBadge label="Early Bird" price={results.preCon.earlyBird} small />
-                      <PriceBadge label="Standard" price={results.preCon.standard} small />
-                      <PriceBadge label="Full Price" price={results.preCon.fullPrice} small />
+                      <PriceBadge label="Early Bird" price={results.preCon.earlyBird} small currencySymbol={currencySymbol} />
+                      <PriceBadge label="Standard" price={results.preCon.standard} small currencySymbol={currencySymbol} />
+                      <PriceBadge label="Full Price" price={results.preCon.fullPrice} small currencySymbol={currencySymbol} />
                     </div>
                   </div>
                 )}
 
+                {/* Copy prices button */}
+                <button
+                  onClick={handleCopy}
+                  style={{
+                    alignSelf: "flex-start",
+                    padding: "5px 14px", fontSize: 13,
+                    border: `1px solid ${C.teal}`,
+                    borderRadius: 4,
+                    background: "transparent",
+                    color: copied ? C.tealDark : C.teal,
+                    fontFamily: "var(--font-inter)",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "opacity 0.15s",
+                  }}
+                >
+                  {copied ? "Copied ✓" : "Copy prices →"}
+                </button>
 
                 {/* Revenue Summary */}
                 <div className="rounded-lg p-5" style={{ border: "1px solid rgba(45,27,78,0.12)", background: "#ffffff" }}>
@@ -477,32 +542,39 @@ export default function Calculator() {
                     style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
                     Revenue summary
                   </p>
-                  <SummaryRow label="Net sponsorship income" value={`$${fmt(results.summary.netSponsorshipIncome)}`} />
-                  <SummaryRow label="Registration revenue" value={`$${fmt(results.summary.registrationRevenue)}`} />
+                  <SummaryRow label="Net sponsorship income" value={`${currencySymbol}${fmt(results.summary.netSponsorshipIncome)}`} />
+                  <SummaryRow label="Registration revenue" value={`${currencySymbol}${fmt(results.summary.registrationRevenue)}`} />
                   {results.preCon && (
-                    <SummaryRow label="Pre-conference revenue" value={`$${fmt(results.summary.preConRevenue)}`} indent />
+                    <SummaryRow label="Pre-conference revenue" value={`${currencySymbol}${fmt(results.summary.preConRevenue)}`} indent />
                   )}
-                  <SummaryRow label="Total revenue" value={`$${fmt(results.summary.totalRevenue)}`} highlight />
-                  <SummaryRow label="Total expenses" value={`$${fmt(results.summary.expenses)}`} />
-                  <SummaryRow label="Net profit" value={`$${fmt(results.summary.netProfit)}`} highlight />
+                  <SummaryRow label="Total revenue" value={`${currencySymbol}${fmt(results.summary.totalRevenue)}`} highlight />
+                  <SummaryRow label="Total expenses" value={`${currencySymbol}${fmt(results.summary.expenses)}`} />
+                  <SummaryRow label="Net profit" value={`${currencySymbol}${fmt(results.summary.netProfit)}`} highlight />
                   <SummaryRow
                     label={results.summary.variance >= 0 ? "Surplus vs. target" : "Shortfall vs. target"}
-                    value={`${results.summary.variance >= 0 ? "+" : ""}$${fmt(Math.abs(results.summary.variance))}`}
+                    value={`${results.summary.variance >= 0 ? "+" : ""}${currencySymbol}${fmt(Math.abs(results.summary.variance))}`}
                   />
                 </div>
 
+                <Disclaimer />
+
                 {/* Download */}
-                <div className="flex flex-col gap-3" style={{ marginTop: "auto" }}>
+                <div className="flex flex-col gap-3">
                   <button
                     className="w-full rounded-sm py-3 text-base transition-opacity hover:opacity-90"
-                    style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)", fontWeight: 600, border: "none", cursor: "pointer" }}
+                    disabled={showGate}
+                    style={{
+                      background: C.plum, color: C.ivory,
+                      fontFamily: "var(--font-inter)", fontWeight: 600,
+                      border: "none",
+                      cursor: showGate ? "not-allowed" : "pointer",
+                      opacity: showGate ? 0.7 : 1,
+                    }}
                     onClick={() => setShowGate(true)}
                   >
-                    Download summary →
+                    {showGate ? "Sending…" : "Download summary →"}
                   </button>
                 </div>
-
-                <Disclaimer />
               </div>
             )}
           </div>
@@ -519,7 +591,7 @@ export default function Calculator() {
 
       {/* Email gate modal */}
       {showGate && results && (
-        <EmailGate onClose={() => setShowGate(false)} results={results} form={form} />
+        <EmailGate onClose={() => setShowGate(false)} results={results} form={form} currencySymbol={currencySymbol} />
       )}
 
       {/* Tooltip CSS */}
@@ -535,11 +607,12 @@ export default function Calculator() {
 
 /* ─── Email gate modal ──────────────────────────────────────────────────────── */
 function EmailGate({
-  onClose, results, form,
+  onClose, results, form, currencySymbol,
 }: {
   onClose: () => void;
   results: CalculateResponse;
   form: FormState;
+  currencySymbol: string;
 }) {
   const [mode, setMode] = useState<"subscribe" | "existing">("subscribe");
   const [firstName, setFirstName] = useState("");
@@ -575,7 +648,7 @@ function EmailGate({
   async function handlePDF() {
     setDownloading("pdf");
     try {
-      await downloadPDF(results, form);
+      await downloadPDF(results, form, currencySymbol);
       fetch("/api/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -592,7 +665,7 @@ function EmailGate({
       const res = await fetch("/api/export/excel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ results, form }),
+        body: JSON.stringify({ results, form, currencySymbol }),
       });
       if (!res.ok) throw new Error("Export failed");
       const blob = await res.blob();

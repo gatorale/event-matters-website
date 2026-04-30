@@ -15,8 +15,8 @@ const WHITE     = "FFFFFFFF";
 const GREY_LIGHT = "FFF5F5F5";
 
 /* ─── value helpers ────────────────────────────────────────────────────────── */
-function cur(n: number) {
-  return "$" + n.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function makeCur(symbol: string) {
+  return (n: number) => symbol + n.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 function pct(n: number) { return n + "%"; }
 function num(n: number) { return n.toLocaleString("en-CA"); }
@@ -114,14 +114,15 @@ function styleDataRow(
 
 /* ─── API route ────────────────────────────────────────────────────────────── */
 export async function POST(req: NextRequest) {
-  const { results, form }: { results: CalculateResponse; form: CalcForm } = await req.json();
+  const { results, form, currencySymbol = "$" }: { results: CalculateResponse; form: CalcForm; currencySymbol?: string } = await req.json();
+  const cur = makeCur(currencySymbol);
 
   const wb = new ExcelJS.Workbook();
   wb.creator = "Event Matters";
   wb.created = new Date();
 
-  buildSummarySheet(wb, results, form);
-  if (results.preCon) buildPreConSheet(wb, results, form);
+  buildSummarySheet(wb, results, form, cur);
+  if (results.preCon) buildPreConSheet(wb, results, form, cur);
 
   const buffer = await wb.xlsx.writeBuffer();
 
@@ -137,7 +138,8 @@ export async function POST(req: NextRequest) {
 function buildSummarySheet(
   wb: ExcelJS.Workbook,
   results: CalculateResponse,
-  form: CalcForm
+  form: CalcForm,
+  cur: (n: number) => string
 ) {
   const ws = wb.addWorksheet("Ticket Pricing Summary");
   ws.columns = [
@@ -289,7 +291,8 @@ function buildSummarySheet(
 function buildPreConSheet(
   wb: ExcelJS.Workbook,
   results: CalculateResponse,
-  form: CalcForm
+  form: CalcForm,
+  cur: (n: number) => string
 ) {
   if (!results.preCon) return;
 

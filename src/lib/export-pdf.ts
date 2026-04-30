@@ -2,8 +2,8 @@ import type { CalcForm } from "@/types/calculator";
 import type { CalculateResponse } from "@/app/api/calculate/route";
 
 /* ─── helpers ──────────────────────────────────────────────────────────────── */
-function cur(n: number) {
-  return "$" + n.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function makeCur(symbol: string) {
+  return (n: number) => symbol + n.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 function pct(n: number) { return n + "%"; }
 function num(n: number) { return n.toLocaleString("en-CA"); }
@@ -66,8 +66,10 @@ function checkPage(doc: any, y: number, needed = 30): number {
 /* ─── main export function ─────────────────────────────────────────────────── */
 export async function downloadPDF(
   results: CalculateResponse,
-  form: CalcForm
+  form: CalcForm,
+  currencySymbol = "$"
 ): Promise<void> {
+  const cur = makeCur(currencySymbol);
   const { default: jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
 

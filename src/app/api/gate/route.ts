@@ -29,14 +29,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Failed to subscribe" }, { status: 502 });
       }
     } else {
-      const checkRes = await fetch(
-        `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/find?email=${encodeURIComponent(email)}`
-      );
-      if (!checkRes.ok) {
-        return NextResponse.json(
-          { error: "Email not found in subscriber list. Please subscribe first." },
-          { status: 404 }
+      try {
+        const checkRes = await fetch(
+          `https://api.substack.com/api/v1/subscriber/${SUBSTACK_PUB_ID}/find?email=${encodeURIComponent(email)}`,
+          { signal: AbortSignal.timeout(5000) }
         );
+        if (checkRes.status === 404) {
+          return NextResponse.json(
+            { error: "We couldn't find that email in our subscriber list. Please subscribe to download." },
+            { status: 404 }
+          );
+        }
+        // Any other non-OK status (network error caught below, API error here) → fail open
+      } catch {
+        // Network failure or timeout → fail open, allow download
       }
     }
   }
