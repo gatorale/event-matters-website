@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Calculator from "@/components/Calculator";
+import NewsletterForm from "@/components/NewsletterForm";
 
 /* ─── Colour constants ──────────────────────────────────────────────────────── */
 const C = {
@@ -392,13 +393,7 @@ function Newsletter() {
           Practical thinking for event professionals. Real-world ideas for
           conference design and year-round engagement.
         </p>
-        <Link
-          href="https://blog.eventmatters.co#subscribe"
-          className="inline-block rounded-sm px-8 py-3 text-base font-medium transition-opacity hover:opacity-90"
-          style={{ background: C.plum, color: C.ivory, fontFamily: "var(--font-inter)" }}
-        >
-          Subscribe on Substack
-        </Link>
+        <NewsletterForm />
       </div>
     </section>
   );

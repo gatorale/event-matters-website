@@ -576,6 +576,11 @@ function EmailGate({
     setDownloading("pdf");
     try {
       await downloadPDF(results, form);
+      fetch("/api/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, format: "pdf", preConEnabled: form.preConEnabled }),
+      }).catch(() => {});
     } finally {
       setDownloading(null);
     }
@@ -598,6 +603,11 @@ function EmailGate({
       a.download = `event-matters-ticket-pricing-${d}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
+      fetch("/api/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, format: "excel", preConEnabled: form.preConEnabled }),
+      }).catch(() => {});
     } finally {
       setDownloading(null);
     }

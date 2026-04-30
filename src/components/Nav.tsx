@@ -29,7 +29,7 @@ export default function Nav() {
 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
-          <NavLink href="https://blog.eventmatters.co">Blog</NavLink>
+          <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/#calculator">Tools</NavLink>
           <NavLink href="/about">About</NavLink>
           <Link
@@ -62,7 +62,7 @@ export default function Nav() {
           className="md:hidden px-6 pb-5 flex flex-col gap-4"
           style={{ background: "#2D1B4E" }}
         >
-          <MobileNavLink href="https://blog.eventmatters.co" onClick={() => setMenuOpen(false)}>
+          <MobileNavLink href="/blog" onClick={() => setMenuOpen(false)}>
             Blog
           </MobileNavLink>
           <MobileNavLink href="/#calculator" onClick={() => setMenuOpen(false)}>
