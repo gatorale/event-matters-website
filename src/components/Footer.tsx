@@ -27,7 +27,7 @@ export default function Footer() {
 
           {/* Nav links */}
           <nav className="flex flex-wrap gap-x-8 gap-y-3">
-            <FooterLink href="https://blog.eventmatters.co">Blog</FooterLink>
+            <FooterLink href="https://eventmatters.substack.com">Blog</FooterLink>
             <FooterLink href="/#calculator">Tools</FooterLink>
             <FooterLink href="/about">About</FooterLink>
             <FooterLink href="mailto:info@eventmatters.co">Contact</FooterLink>

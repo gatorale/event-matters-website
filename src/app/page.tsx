@@ -159,7 +159,7 @@ function WhatWeDo() {
             title="Weekly Posts"
             body="Practical articles, frameworks, and perspectives on event strategy, speaker programmes, audience engagement, and the year-round work that makes events worth attending."
             cta="Read the blog →"
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
           />
           <Card
             eyebrow="Free tools"
@@ -275,19 +275,19 @@ const BLOG_POSTS = [
     tag:     "Strategy",
     title:   "Why your post-event engagement drops — and how to fix it",
     excerpt: "Most event teams measure success on the day. Here's what to measure during the other 362.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
   {
     tag:     "CFP",
     title:   "The CFP review process most committees get wrong",
     excerpt: "Blind review, scoring rubrics, and the one conversation that changes everything.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
   {
     tag:     "Sponsorship",
     title:   "Keeping sponsors warm between events",
     excerpt: "Relationships cool when there's nothing to send. Here's a content cadence that changes that.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
 ];
 
@@ -314,7 +314,7 @@ function BlogSection() {
             </h2>
           </div>
           <Link
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
             className="hidden md:block text-sm font-medium"
             style={{ color: C.teal, fontFamily: "var(--font-inter)", borderBottom: `1px solid ${C.teal}`, paddingBottom: 1 }}
           >
@@ -354,7 +354,7 @@ function BlogSection() {
 
         <div className="mt-8 md:hidden text-center">
           <Link
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
             className="text-sm font-medium"
             style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
           >

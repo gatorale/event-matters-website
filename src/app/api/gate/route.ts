@@ -89,7 +89,7 @@ function buildEmailHtml(firstName: string) {
         <p style="margin-top:32px;font-size:13px;color:#888;">
           You're receiving this because you used the Event Matters ticket pricing calculator.
           <br>
-          <a href="https://blog.eventmatters.co" style="color:#00D4AA;">Manage your subscription</a>
+          <a href="https://eventmatters.substack.com" style="color:#00D4AA;">Manage your subscription</a>
         </p>
       </div>
     </div>

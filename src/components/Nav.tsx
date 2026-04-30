@@ -34,7 +34,7 @@ export default function Nav() {
           <NavLink href="/#calculator">Tools</NavLink>
           <NavLink href="/about">About</NavLink>
           <Link
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
             className="rounded-sm px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
             style={{
               background: "#00D4AA",
@@ -73,7 +73,7 @@ export default function Nav() {
             About
           </MobileNavLink>
           <Link
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
             onClick={() => setMenuOpen(false)}
             className="self-start rounded-sm px-4 py-2 text-sm font-medium mt-1"
             style={{ background: "#00D4AA", color: "#2D1B4E" }}

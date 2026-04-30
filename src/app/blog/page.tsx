@@ -23,21 +23,21 @@ const POSTS = [
     title:   "Why your post-event engagement drops — and how to fix it",
     excerpt:
       "Most event teams measure success on the day. Here's what to measure during the other 362.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
   {
     tag:     "CFP",
     title:   "The CFP review process most committees get wrong",
     excerpt:
       "Blind review, scoring rubrics, and the one conversation that changes everything.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
   {
     tag:     "Sponsorship",
     title:   "Keeping sponsors warm between events",
     excerpt:
       "Relationships cool when there's nothing to send. Here's a content cadence that changes that.",
-    href:    "https://blog.eventmatters.co",
+    href:    "https://eventmatters.substack.com",
   },
 ];
 
@@ -124,7 +124,7 @@ function Posts() {
 
         <div className="text-center">
           <Link
-            href="https://blog.eventmatters.co"
+            href="https://eventmatters.substack.com"
             className="inline-block text-sm font-medium"
             style={{
               color: C.teal,
