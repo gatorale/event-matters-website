@@ -21,7 +21,7 @@ export default function Footer() {
               className="text-sm leading-relaxed"
               style={{ color: "rgba(250,249,247,0.55)", fontFamily: "var(--font-inter)" }}
             >
-              Built for the other 362 days.
+              Beyond the event. Practical matters.
             </p>
           </div>
 
