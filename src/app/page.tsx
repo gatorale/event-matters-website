@@ -40,24 +40,24 @@ function Hero() {
           className="text-6xl md:text-7xl font-bold leading-tight mb-8"
           style={{ fontFamily: "var(--font-outfit)", color: C.ivory }}
         >
-          Built for the other<br />
-          <span style={{ color: C.teal }}>362 days.</span>
+          Beyond the event.<br />
+          <span style={{ color: C.teal }}>Practical matters.</span>
         </h1>
 
         <p
           className="text-xl md:text-2xl font-semibold mb-4"
           style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
         >
-          The three days matter. So do the other 362.
+          Before, during, and after.
         </p>
 
         <p
           className="text-lg max-w-2xl leading-relaxed mb-10"
           style={{ color: "rgba(250,249,247,0.78)", fontFamily: "var(--font-inter)" }}
         >
-          Your event ends but your engagement shouldn&apos;t. Event Matters gives
-          you the tools, clarity, and strategic thinking to keep people connected
-          long after the lights go down.
+          Event Matters embodies the full cycle of conference and event planning.
+          The strategy, content, logistics, and community are what make going to
+          events worth it.
         </p>
 
         <Link
