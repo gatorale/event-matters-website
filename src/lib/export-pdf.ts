@@ -93,7 +93,7 @@ export async function downloadPDF(
   doc.setFontSize(8);
   doc.text("eventmatters.co", W - M, 12, { align: "right" });
   doc.setTextColor(...TEAL);
-  doc.text("Built for the other 362 days.", W - M, 19, { align: "right" });
+  doc.text("Beyond the event. Practical matters.", W - M, 19, { align: "right" });
 
   /* ── Title block ────────────────────────────────────────────────────────── */
   let y = 38;
