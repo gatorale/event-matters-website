@@ -156,7 +156,7 @@ function buildSummarySheet(
     alignment: { vertical: "middle", horizontal: "left", indent: 1 },
     height: 36,
   });
-  addMergedRow(ws, "A:D", "Built for the other 362 days.  ·  eventmatters.co", {
+  addMergedRow(ws, "A:D", "Beyond the event. Practical matters.  ·  eventmatters.co", {
     fill: fill(PLUM),
     font: font(TEAL, 9, false, true),
     alignment: { vertical: "middle", horizontal: "left", indent: 1 },

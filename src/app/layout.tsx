@@ -20,7 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Event Matters — Built for the other 362 days",
+  title: "Event Matters — Beyond the event. Practical matters.",
   description:
     "Practical tools, direct content, and the thinking behind great conferences. For event professionals who care about year-round engagement.",
   metadataBase: new URL("https://eventmatters.co"),
