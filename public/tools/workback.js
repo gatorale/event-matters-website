@@ -2018,7 +2018,7 @@ function renderResults() {
       
       tr.innerHTML = `
         <td class="col-toggle"><input type="checkbox" data-toggle-row="${m.row}" ${isExcluded ? '' : 'checked'} aria-label="Include ${escapeHtml(m.name)}"></td>
-        <td class="col-name">${chevron}<span>${escapeHtml(m.name)}${overshootBadge}${ackBadge}</span></td>
+        <td class="col-name"><div class="col-name-inner">${chevron}<span>${escapeHtml(m.name)}${overshootBadge}${ackBadge}</span></div></td>
         <td class="col-owner">${escapeHtml(m.owner)}</td>
         <td class="col-date">${fmtDate(r.start)}</td>
         <td class="col-date">${fmtDate(r.end)}</td>

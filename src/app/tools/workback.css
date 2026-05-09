@@ -251,7 +251,14 @@
     transition: border-color 0.15s;
   }
   .holiday-toggle:hover { border-color: var(--teal); }
-  .holiday-toggle input { accent-color: var(--teal); cursor: pointer; }
+  .holiday-toggle input[type="checkbox"] {
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    margin-right: 6px;
+    accent-color: var(--teal);
+    cursor: pointer;
+  }
   
   /* ============================================================
      PHASE TOGGLES + INDIVIDUAL MILESTONE TOGGLES
@@ -522,7 +529,7 @@
   #workback tr:last-child td { border-bottom: none; }
   
   td.col-name { font-weight: 500; min-width: 220px; }
-  td.col-name { display: flex; align-items: flex-start; gap: var(--s-2); }
+  .col-name-inner { display: flex; align-items: flex-start; gap: var(--s-2); }
   td.col-date { white-space: nowrap; font-variant-numeric: tabular-nums; }
   td.col-weeks { font-variant-numeric: tabular-nums; color: var(--charcoal-soft); }
   td.col-owner { font-size: 0.82rem; color: var(--charcoal-soft); min-width: 160px; }
