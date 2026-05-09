@@ -129,7 +129,7 @@ function StatsStrip() {
   );
 }
 
-/* ─── 3. What I do ───────────────────────────────────────────────────────── */
+/* ─── 3. Free tools ──────────────────────────────────────────────────────── */
 function WhatWeDo() {
   return (
     <section
@@ -141,36 +141,29 @@ function WhatWeDo() {
           className="text-xs font-semibold uppercase tracking-widest mb-3"
           style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
         >
-          What I do
+          Free tools
         </p>
         <h2
           className="text-4xl font-bold mb-12"
           style={{ color: C.plum, fontFamily: "var(--font-outfit)" }}
         >
-          Practical thoughts, tools, and resources.
+          Practical tools for event professionals.
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           <Card
-            eyebrow="Writing & thinking"
-            title="Weekly Posts"
-            body="Practical articles, frameworks, and perspectives on event strategy, speaker programmes, audience engagement, and the year-round work that makes events worth attending."
-            cta="Read the blog →"
-            href="https://eventmatters.substack.com"
-          />
-          <Card
-            eyebrow="Free tools"
+            eyebrow="Free tool"
             title="Ticket Calculator"
-            body="The ticket pricing engine. Enter your net profit target, expenses, sponsorship income and commission rate, and registration purchase split to get the lowest viable ticket price, for each pricing tier, instantly."
-            cta="Use the calculator →"
+            body="The ticket pricing engine. Enter your net profit target, expenses, sponsorship income, and registration purchase split to get the lowest viable ticket price for each pricing tier, instantly."
+            cta="Use this tool →"
             href="/tools#ticket-calculator"
           />
           <Card
-            eyebrow="Free resources"
-            title="Everyday Templates"
-            body="Everyday Templates. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
-            cta="Explore Templates →"
-            href="/tools"
+            eyebrow="Free tool"
+            title="Workback Schedule Generator"
+            body="Build a complete year-long event workback from your event date. 60+ milestones across seven phases, business-day aware, with holiday calendars for 10+ regions. Choose Standard or Sprint runway and export to CSV."
+            cta="Use this tool →"
+            href="/tools#workback"
           />
         </div>
       </div>

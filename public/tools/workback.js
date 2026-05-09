@@ -1727,11 +1727,16 @@ function init() {
   });
 
   const workbackSection = document.getElementById('workback');
+  const workbackActionsRow = document.querySelector('#workback .actions-row');
   function updateWorkbackTopBtn() {
     if (!workbackSection) return;
     const pastTop = workbackSection.getBoundingClientRect().top < -80;
-    workbackTopBtn.style.opacity = pastTop ? '1' : '0';
-    workbackTopBtn.style.pointerEvents = pastTop ? 'auto' : 'none';
+    const pastActions = workbackActionsRow
+      ? workbackActionsRow.getBoundingClientRect().bottom < 0
+      : pastTop;
+    const show = pastTop && pastActions;
+    workbackTopBtn.style.opacity = show ? '1' : '0';
+    workbackTopBtn.style.pointerEvents = show ? 'auto' : 'none';
   }
   window.addEventListener('scroll', updateWorkbackTopBtn, { passive: true });
   updateWorkbackTopBtn();
