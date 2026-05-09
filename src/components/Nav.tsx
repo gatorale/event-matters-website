@@ -31,7 +31,7 @@ export default function Nav() {
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
           <NavLink href="/blog">Blog</NavLink>
-          <NavLink href="/#calculator">Tools</NavLink>
+          <NavLink href="/tools">Tools</NavLink>
           <NavLink href="/about">About</NavLink>
           <Link
             href="https://eventmatters.substack.com"
@@ -66,7 +66,7 @@ export default function Nav() {
           <MobileNavLink href="/blog" onClick={() => setMenuOpen(false)}>
             Blog
           </MobileNavLink>
-          <MobileNavLink href="/#calculator" onClick={() => setMenuOpen(false)}>
+          <MobileNavLink href="/tools" onClick={() => setMenuOpen(false)}>
             Tools
           </MobileNavLink>
           <MobileNavLink href="/about" onClick={() => setMenuOpen(false)}>

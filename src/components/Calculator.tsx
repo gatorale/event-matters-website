@@ -589,13 +589,6 @@ export default function Calculator() {
           </div>
         </div>
 
-        {/* Marcella line */}
-        <p className="text-center text-sm mt-12" style={{ color: C.charcoal, fontFamily: "var(--font-inter)" }}>
-          Built by{" "}
-          <a href="/about" style={{ color: C.violet, borderBottom: `1px solid ${C.violet}`, paddingBottom: 1 }}>
-            Marcella McKeown
-          </a>
-        </p>
       </div>
 
       {/* Email gate modal */}

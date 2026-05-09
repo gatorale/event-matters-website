@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Calculator from "@/components/Calculator";
 import NewsletterForm from "@/components/NewsletterForm";
 
 /* ─── Colour constants ──────────────────────────────────────────────────────── */
@@ -20,8 +19,6 @@ export default function HomePage() {
       <Hero />
       <StatsStrip />
       <WhatWeDo />
-      <CalculatorBand />
-      <CalculatorSection />
       <BlogSection />
       <Newsletter />
     </>
@@ -166,14 +163,14 @@ function WhatWeDo() {
             title="Ticket Calculator"
             body="The ticket pricing engine. Enter your net profit target, expenses, sponsorship income and commission rate, and registration purchase split to get the lowest viable ticket price, for each pricing tier, instantly."
             cta="Use the calculator →"
-            href="#calculator"
+            href="/tools#ticket-calculator"
           />
           <Card
             eyebrow="Free resources"
             title="Everyday Templates"
             body="Everyday Templates. Short, structured input forms for timelines, workbacks, budgets, and comms calendars. Each one helps you start quickly and export cleanly to PDF, Excel, or Google Sheets."
             cta="Explore Templates →"
-            href="#"
+            href="/tools"
           />
         </div>
       </div>
@@ -228,48 +225,7 @@ function Card({
   );
 }
 
-/* ─── 4. Calculator band ─────────────────────────────────────────────────── */
-function CalculatorBand() {
-  return (
-    <section
-      id="calculator"
-      style={{ background: C.plum }}
-      className="px-6 py-16 lg:px-10"
-    >
-      <div className="mx-auto max-w-4xl text-center">
-        <p
-          className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: C.teal, fontFamily: "var(--font-inter)" }}
-        >
-          Free tool
-        </p>
-        <h2
-          className="text-4xl md:text-5xl font-bold leading-tight mb-6"
-          style={{ color: C.ivory, fontFamily: "var(--font-outfit)" }}
-        >
-          What should you charge for conference{" "}
-          <em style={{ color: C.teal, fontStyle: "italic" }}>tickets?</em>
-        </h2>
-        <p
-          className="text-lg max-w-2xl mx-auto leading-relaxed"
-          style={{ color: "rgba(250,249,247,0.78)", fontFamily: "var(--font-inter)" }}
-        >
-          The only calculator built specifically for conference ticket pricing.
-          Enter your net profit target, expenses, sponsorship income and commission
-          rate, attendee numbers, and registration purchase split to get the lowest
-          viable ticket price for each tier.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ─── 5. Calculator ──────────────────────────────────────────────────────── */
-function CalculatorSection() {
-  return <Calculator />;
-}
-
-/* ─── 6. Blog section ────────────────────────────────────────────────────── */
+/* ─── 4. Blog preview ───────────────────────────────────────────────────── */
 const BLOG_POSTS = [
   {
     tag:     "Strategy",
@@ -366,7 +322,7 @@ function BlogSection() {
   );
 }
 
-/* ─── 7. Newsletter ──────────────────────────────────────────────────────── */
+/* ─── 5. Newsletter ──────────────────────────────────────────────────────── */
 function Newsletter() {
   return (
     <section

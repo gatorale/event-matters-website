@@ -17,8 +17,13 @@
 }
 
 html {
+  scroll-behavior: smooth;
   background: #FAF9F7;
   color: #2C2C2A;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
 }
 
 body {
